@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: chiwiwis
+      POSTGRES_PASSWORD: chiwiwis
+      POSTGRES_DB: chiwiwis
+    ports:
+      - "5433:5432"
+    volumes:
+      - chiwiwis_pg:/var/lib/postgresql/data
+
+  worker:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://chiwiwis:chiwiwis@postgres:5432/chiwiwis
+    depends_on:
+      - postgres
+
+volumes:
+  chiwiwis_pg:
