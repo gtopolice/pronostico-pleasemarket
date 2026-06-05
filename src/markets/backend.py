@@ -94,6 +94,9 @@ class BackendClient:
 
         async with httpx.AsyncClient(timeout=30.0) as client:
             r = await client.get(f"{self.base}/claims", headers=self._strapi_headers(), params=params)
+            if r.status_code in (401, 403, 404):
+                logger.info("claims fetch skipped: HTTP %s", r.status_code)
+                return []
             r.raise_for_status()
             data = r.json()
             return data.get("data") or []

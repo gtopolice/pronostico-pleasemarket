@@ -33,6 +33,9 @@ async def run_claims_loop(backend: BackendClient, x: XClient) -> None:
 async def _poll_claims(backend: BackendClient, x: XClient) -> None:
     global _cursor, _hour_posts, _hour_start
 
+    if not settings.api_token:
+        return
+
     now = datetime.now(timezone.utc)
     if _hour_start is None or (now - _hour_start).total_seconds() > 3600:
         _hour_start = now

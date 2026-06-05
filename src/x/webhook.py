@@ -182,7 +182,13 @@ async def _handle_share_command(ctx: TweetContext, backend: BackendClient, x: XC
 
 def _extract_tweet(payload: dict) -> dict | None:
     if "tweet_id" in payload and "text" in payload:
-        return payload
+        return {
+            "id": str(payload["tweet_id"]),
+            "author_id": str(payload.get("author_id", "")),
+            "author_handle": payload.get("author_handle"),
+            "text": payload.get("text") or "",
+            "parent_text": payload.get("parent_text"),
+        }
 
     for event in payload.get("tweet_create_events") or []:
         return {
