@@ -1,0 +1,412 @@
+/* ============================================
+   MATERIAL DESIGN THEME - CSS Variables
+   Generated from matherial-theme.json
+   DO NOT EDIT MANUALLY - Run: pnpm generate:css
+   ============================================ */
+
+/* ============================================
+   LIGHT THEME - Material Design Colors
+   ============================================ */
+:root {
+  --primary: #000000;
+  --surface-tint: #5e5e5e;
+  --on-primary: #ffffff;
+  --primary-container: #1b1b1b;
+  --on-primary-container: #848484;
+  --secondary: #626200;
+  --on-secondary: #ffffff;
+  --secondary-container: #F2FE67;
+  --on-secondary-container: #757500;
+  --tertiary: #432de7;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #2958ff;
+  --on-tertiary-container: #f0ecff;
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+  --background: #ffffff;
+  --on-background: #1b1b1b;
+  --surface: #f9f9f9;
+  --on-surface: #1b1b1b;
+  --surface-variant: #ebe0e1;
+  --on-surface-variant: #4a4a4a;
+  --outline: #878585;
+  --outline-variant: #bcbcbc;
+  --shadow: #000000;
+  --scrim: #000000;
+  --inverse-surface: #303030;
+  --inverse-on-surface: #f1f1f1;
+  --inverse-primary: #c6c6c6;
+  --primary-fixed: #e2e2e2;
+  --on-primary-fixed: #1b1b1b;
+  --primary-fixed-dim: #c6c6c6;
+  --on-primary-fixed-variant: #474747;
+  --secondary-fixed: #e9e945;
+  --on-secondary-fixed: #1d1d00;
+  --secondary-fixed-dim: #cdcd27;
+  --on-secondary-fixed-variant: #494900;
+  --tertiary-fixed: #e3dfff;
+  --on-tertiary-fixed: #120068;
+  --tertiary-fixed-dim: #432de7;
+  --on-tertiary-fixed-variant: #3411db;
+  --surface-dim: #dadada;
+  --surface-bright: #f9f9f9;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f3f3f3;
+  --surface-container: #eeeeee;
+  --surface-container-high: #e8e8e8;
+  --surface-container-highest: #e2e2e2;
+  --modal-button-bg: #000000;
+  --text-on-modal-button: #ffffff;
+  --link-color: var(--tertiary-container);
+}
+
+/* ============================================
+   DARK THEME - Material Design Colors
+   ============================================ */
+[data-theme="dark"],
+.dark {
+  --primary: #c6c6c6;
+  --surface-tint: #c6c6c6;
+  --on-primary: #303030;
+  --primary-container: #000000;
+  --on-primary-container: #757575;
+  --secondary: #ffffff;
+  --on-secondary: #323200;
+  --secondary-container: #e9e945;
+  --on-secondary-container: #686800;
+  --tertiary: #432de7;
+  --on-tertiary: #2100a3;
+  --tertiary-container: #2958ff;
+  --on-tertiary-container: #f0ecff;
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+  --background: #141218;
+  --on-background: #e2e2e2;
+  --surface: #141218;
+  --on-surface: #e2e2e2;
+  --surface-variant: #4c4546;
+  --on-surface-variant: #cfc4c5;
+  --outline: #988e90;
+  --outline-variant: #4c4546;
+  --shadow: #000000;
+  --scrim: #000000;
+  --inverse-surface: #e2e2e2;
+  --inverse-on-surface: #303030;
+  --inverse-primary: #5e5e5e;
+  --primary-fixed: #e2e2e2;
+  --on-primary-fixed: #1b1b1b;
+  --primary-fixed-dim: #c6c6c6;
+  --on-primary-fixed-variant: #474747;
+  --secondary-fixed: #e9e945;
+  --on-secondary-fixed: #1d1d00;
+  --secondary-fixed-dim: #cdcd27;
+  --on-secondary-fixed-variant: #494900;
+  --tertiary-fixed: #e3dfff;
+  --on-tertiary-fixed: #120068;
+  --tertiary-fixed-dim: #c4c0ff;
+  --on-tertiary-fixed-variant: #3411db;
+  --surface-dim: #131313;
+  --surface-bright: #393939;
+  --surface-container-lowest: #0e0e0e;
+  --surface-container-low: #1b1b1b;
+  --surface-container: #1f1f1f;
+  --surface-container-high: #2a2a2a;
+  --surface-container-highest: #353535;
+  --modal-button-bg: var(--secondary-container);
+  --text-on-modal-button: var(--on-secondary-container);
+  --link-color: #C4C0FF;
+
+}
+
+/* ============================================
+   COMPATIBILITY VARIABLES - For existing code
+   These map to Material Design colors for backward compatibility
+   ============================================ */
+:root {
+  /* Background and Surface */
+
+  /* Text colors */
+  --text-primary: var(--on-surface);
+  --text-secondary: var(--on-surface-variant);
+
+  /* Border colors */
+  --border-card-color: var(--outline);
+
+  /* Button colors - using custom colors from extended palette */
+  --primary-button-bg: #16f6984d;
+  --text-on-primary-button: #006c3f;
+  --primary-button-bg-active: #16f698;
+  --text-on-primary-button-active: #006c3f;
+
+  --secondary-button-bg: #9449f333;
+  --text-on-secondary-button: #7a28d8;
+  --secondary-button-bg-active: #9449f3;
+  --text-on-secondary-button-active: #fffbff;
+
+  --tertiary-button-bg: rgba(27, 27, 27, 0.1);
+  --text-on-tertiary-button: var(--on-surface);
+  --tertiary-button-bg-active: #1b1b1b;
+  --text-on-tertiary-button-active: #ffffff;
+
+  /* Icon colors */
+  --primary-icon: var(--outline);
+  --secondary-icon: var(--on-surface-variant);
+
+  /* Other */
+  --label-text-color: var(--outline);
+  --text-on-brand: var(--on-surface);
+  --tag-button-border-color: var(--outline);
+  --tag-button-text-color: var(--on-surface-variant);
+  --save-button-bg: var(--tertiary-container);
+  --tag-button-selected-bg: var(--primary);
+  --search-input-bg: var(--surface-container);
+  --search-input-text-color: var(--on-secondary-fixed-variant);
+  --tertiary-text-color: var(--tertiary-container);
+
+  /* Market Card active text color */
+  --market-card-active-text: var(--primary);
+
+  /* Auth Button text color */
+  --auth-button-text: var(--primary);
+
+  /* Tag Button border color - special case */
+  --tag-button-border-special: var(--outline);
+
+  /* Predictions Card header title color */
+  --predictions-card-title: var(--primary);
+
+  /* Market semantic tokens */
+  --color-yes: #006D40;
+  --color-no: #7A28D8;
+
+  /* Button disabled states */
+  --primary-button-bg-disabled: var(--search-input-bg);
+  --text-on-primary-button-disabled: #848484;
+  --primary-button-bg-active-disabled: var(--search-input-bg);
+  --text-on-primary-button-active-disabled: #848484;
+
+  --secondary-button-bg-disabled: var(--search-input-bg);
+  --text-on-secondary-button-disabled: #848484;
+  --secondary-button-bg-active-disabled: var(--search-input-bg);
+  --text-on-secondary-button-active-disabled: #848484;
+
+  --tertiary-button-bg-disabled: var(--search-input-bg);
+  --text-on-tertiary-button-disabled: #848484;
+  --tertiary-button-bg-active-disabled: var(--search-input-bg);
+  --text-on-tertiary-button-active-disabled: #848484;
+
+  --outline-button-bg-disabled: transparent;
+  --text-on-outline-button-disabled: #848484;
+  --outline-button-bg-active-disabled: var(--search-input-bg);
+  --text-on-outline-button-active-disabled: #848484;
+  --modal-button-bg-disabled: var(--search-input-bg);
+  --text-on-modal-button-disabled: #848484;
+  --text-on-success: #006c3f;
+  --text-on-error: #690005;
+  --text-on-info: #006c3f;
+  --text-on-warning: #690005;
+}
+
+[data-theme="dark"],
+.dark {
+  /* Button colors for dark theme */
+  --primary-button-bg: rgba(22, 246, 152, 0.3);
+  --text-on-primary-button: #16f698;
+  --primary-button-bg-active: #16f698;
+  --text-on-primary-button-active: #00391F;
+
+  --secondary-button-bg: rgba(148, 73, 243, 0.2);
+  --text-on-secondary-button: #AE71FF;
+  --secondary-button-bg-active: #AE71FF;
+  --text-on-secondary-button-active: #450086;
+  --tertiary-button-bg: rgba(132, 132, 132, 0.2);
+  --text-on-tertiary-button: var(--on-primary-container);
+
+  /* Icon colors for dark theme */
+  --primary-icon: var(--on-surface-variant);
+  --secondary-icon: #757575;
+
+  /* Other dark theme overrides */
+  --label-text-color: #b3b3b3;
+  --text-on-brand: var(--on-surface);
+  --tag-button-border-color: var(--outline);
+  --tag-button-text-color: var(--on-surface-variant);
+  --save-button-bg: var(--tertiary-container);
+  --search-input-bg: #434343;
+  --search-input-text-color: #b3b3b3;
+  --tertiary-text-color: var(--on-tertiary-container);
+
+  /* Market Card active text color */
+  --market-card-active-text: #f3f3f3;
+
+  /* Auth Button text color */
+  --auth-button-text: #323200;
+
+  /* Tag Button border color - special case (Border/Brand/Tertiary from Figma) */
+  --tag-button-border-special: #757575;
+
+  /* Predictions Card header title color */
+  --predictions-card-title: #f3f3f3;
+
+  /* Market semantic tokens */
+  --color-yes: #16F698;
+  --color-no: #AE71FF;
+}
+
+/* ============================================
+   TAILWIND THEME INTEGRATION (v4)
+   ============================================ */
+@theme {
+  --font-sans: var(--font-roboto, var(--font-geist-sans));
+  --font-mono: var(--font-geist-mono);
+
+  /* Material Design colors - available as Tailwind utilities */
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-secondary: var(--secondary);
+  --color-on-secondary: var(--on-secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-tertiary: var(--tertiary);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-error: var(--error);
+  --color-on-error: var(--on-error);
+  --color-error-container: var(--error-container);
+  --color-on-error-container: var(--on-error-container);
+  --color-background: var(--background);
+  --color-on-background: var(--on-background);
+  --color-surface: var(--surface);
+  --color-on-surface: var(--on-surface);
+  --color-surface-variant: var(--surface-variant);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+}
+
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
+/* Apply Roboto globally to all text elements */
+* {
+  font-family: var(--font-roboto, var(--font-geist-sans), sans-serif);
+}
+
+body {
+  font-family: var(--font-roboto, var(--font-geist-sans), sans-serif);
+}
+
+/* ============================================
+   SCROLLBAR HIDING - Applied immediately to prevent FOUC
+   ============================================ */
+/* Hide scrollbars for custom scroll containers (prevents FOUC during React hydration) */
+.custom-scroll-container,
+.custom-scroll-container * {
+  /* Firefox */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.custom-scroll-container::-webkit-scrollbar,
+.custom-scroll-container *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Hide scrollbars for react-indiana-drag-scroll containers */
+[data-scroll-container],
+[data-scroll-container] * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+[data-scroll-container]::-webkit-scrollbar,
+[data-scroll-container] *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* ============================================
+   SECTION WRAPPER - Remove padding on large screens
+   ============================================ */
+@media (min-width: 1330px) {
+
+
+  /* So specific that is the section wrapper and that has the class section-wrapper-no-padding-lg */
+  section[data-section-wrapper].section-wrapper-no-padding-lg,
+  section.section-wrapper-no-padding-lg.px-4,
+  section.section-wrapper-no-padding-lg[class*="px-4"],
+  .section-wrapper-no-padding-lg.px-4,
+  .section-wrapper-no-padding-lg[class*="px-4"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-inline: 0 !important;
+    padding-inline-start: 0 !important;
+    padding-inline-end: 0 !important;
+  }
+}
+
+/* ============================================
+   WITHDRAW MODAL SPINNER ANIMATION
+   ============================================ */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.withdraw-modal-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* ============================================
+   MUI ALERT CUSTOMIZATION
+   ============================================ */
+.MuiAlert-standardError {
+  background-color: var(--error-container) !important;
+  color: var(--on-error-container) !important;
+  border-radius: 8px !important;
+}
+
+.MuiAlert-standardError .MuiAlert-message {
+  font-family: Roboto, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  line-height: 16px !important;
+  letter-spacing: 0.4px !important;
+  color: var(--on-error-container) !important;
+}
+
+/* ============================================
+   ROTATING GRADIENT BORDER
+   ============================================ */
+@keyframes rotate-gradient {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

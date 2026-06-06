@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
 import { DEFAULT_MARKET_IMAGE } from "@/lib/fake-market-data";
 
 type MarketHeroImageProps = {
@@ -22,7 +23,11 @@ export function MarketHeroImage({ src, alt }: MarketHeroImageProps) {
       className="market-hero__image"
       src={activeSrc}
       alt={alt}
-      onError={() => setActiveSrc(DEFAULT_MARKET_IMAGE)}
+      onError={() => {
+        if (activeSrc !== PLEASE_MARKET_LOGO_SRC) {
+          setActiveSrc(PLEASE_MARKET_LOGO_SRC);
+        }
+      }}
     />
   );
 }

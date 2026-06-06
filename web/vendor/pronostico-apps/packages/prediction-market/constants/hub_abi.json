@@ -1,0 +1,574 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "_ctf",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "addAdmin",
+    "inputs": [
+      {
+        "name": "admin_",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "addOperator",
+    "inputs": [
+      {
+        "name": "operator_",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "admins",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "canAdminResolve",
+    "inputs": [
+      {
+        "name": "questionId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "ctf",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IConditionalTokens"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "emergencyResolve",
+    "inputs": [
+      {
+        "name": "questionId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "payouts",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getMarketConfig",
+    "inputs": [
+      {
+        "name": "questionId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct PronosticoResolutionHub.MarketResolutionConfig",
+        "components": [
+          {
+            "name": "strategy",
+            "type": "uint8",
+            "internalType": "enum PronosticoResolutionHub.ResolutionStrategy"
+          },
+          {
+            "name": "primaryResolver",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "escalationTimeout",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "closeTime",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "outcomeSlotCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "resolved",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isAdmin",
+    "inputs": [
+      {
+        "name": "usr",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isOperator",
+    "inputs": [
+      {
+        "name": "usr",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "marketConfigs",
+    "inputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "strategy",
+        "type": "uint8",
+        "internalType": "enum PronosticoResolutionHub.ResolutionStrategy"
+      },
+      {
+        "name": "primaryResolver",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "escalationTimeout",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "closeTime",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "outcomeSlotCount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "resolved",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "operators",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "registerMarket",
+    "inputs": [
+      {
+        "name": "questionId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "strategy",
+        "type": "uint8",
+        "internalType": "enum PronosticoResolutionHub.ResolutionStrategy"
+      },
+      {
+        "name": "primaryResolver",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "closeTime",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "escalationWindow",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "outcomeSlotCount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "removeAdmin",
+    "inputs": [
+      {
+        "name": "admin",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "removeOperator",
+    "inputs": [
+      {
+        "name": "operator",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "renounceAdminRole",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "renounceOperatorRole",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "resolveViaAdmin",
+    "inputs": [
+      {
+        "name": "questionId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "payouts",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "resolveViaOracle",
+    "inputs": [
+      {
+        "name": "questionId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "payouts",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updateMarketResolver",
+    "inputs": [
+      {
+        "name": "questionId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "newResolver",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "MarketRegistered",
+    "inputs": [
+      {
+        "name": "questionId",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "strategy",
+        "type": "uint8",
+        "indexed": false,
+        "internalType": "enum PronosticoResolutionHub.ResolutionStrategy"
+      },
+      {
+        "name": "primaryResolver",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "escalationTimeout",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "MarketResolved",
+    "inputs": [
+      {
+        "name": "questionId",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "resolvedBy",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "payouts",
+        "type": "uint256[]",
+        "indexed": false,
+        "internalType": "uint256[]"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "NewAdmin",
+    "inputs": [
+      {
+        "name": "newAdminAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "admin",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "NewOperator",
+    "inputs": [
+      {
+        "name": "newOperatorAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "admin",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RemovedAdmin",
+    "inputs": [
+      {
+        "name": "removedAdmin",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "admin",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RemovedOperator",
+    "inputs": [
+      {
+        "name": "removedOperator",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "admin",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyResolved",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ConditionNotPrepared",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "EscalationWindowNotOpen",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidOutcomeCount",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "MarketAlreadyRegistered",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "MarketNotRegistered",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotAdmin",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotOperator",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotPrimaryResolver",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "StrategyIsAdminOnly",
+    "inputs": []
+  }
+]

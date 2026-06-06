@@ -195,10 +195,6 @@ export function AuthButton() {
           </div>
 
           <div className="wallet-menu__section" role="none">
-            <Link className="wallet-menu__item" href="/dashboard" role="menuitem" onClick={closeMenu}>
-              <DashboardIcon />
-              Dashboard
-            </Link>
             {address ? (
               <>
                 <div className="wallet-menu__address-row" role="none">
@@ -235,6 +231,10 @@ export function AuthButton() {
                 </a>
               </>
             ) : null}
+            <Link className="wallet-menu__item" href="/dashboard" role="menuitem" onClick={closeMenu}>
+              <DashboardIcon />
+              Dashboard
+            </Link>
             {!twitter ? (
               <button
                 className="wallet-menu__item"

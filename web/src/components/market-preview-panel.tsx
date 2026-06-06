@@ -2,16 +2,23 @@
 
 import { useMemo, useState } from "react";
 
-import { fakeChartPoints, fakeMarketStats, formatUsd } from "@/lib/fake-market-data";
 import { MarketPreviewChart } from "@/components/market-preview-chart";
-import { MarketPreviewTrade } from "@/components/market-preview-trade";
+import { MarketPreviewCheckout } from "@/components/market-preview-checkout";
+import { fakeChartPoints, fakeMarketStats, formatUsd } from "@/lib/fake-market-data";
 
 type MarketPreviewPanelProps = {
   marketId: string;
+  title: string;
+  closeTimeUtc?: string | null;
   isPreview: boolean;
 };
 
-export function MarketPreviewPanel({ marketId, isPreview }: MarketPreviewPanelProps) {
+export function MarketPreviewPanel({
+  marketId,
+  title,
+  closeTimeUtc,
+  isPreview,
+}: MarketPreviewPanelProps) {
   const [selectedShare, setSelectedShare] = useState<"YES" | "NO">("YES");
   const stats = useMemo(() => fakeMarketStats(marketId), [marketId]);
   const chartData = useMemo(
@@ -34,9 +41,10 @@ export function MarketPreviewPanel({ marketId, isPreview }: MarketPreviewPanelPr
           selectedShare={selectedShare}
           onToggleShare={() => setSelectedShare((value) => (value === "YES" ? "NO" : "YES"))}
         />
-        <MarketPreviewTrade
-          priceYes={stats.priceYes}
-          priceNo={stats.priceNo}
+        <MarketPreviewCheckout
+          marketId={marketId}
+          title={title}
+          closeTimeUtc={closeTimeUtc}
           isPreview={isPreview}
         />
       </div>

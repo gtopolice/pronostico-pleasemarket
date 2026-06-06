@@ -1,3 +1,9 @@
+import {
+  AmbassadorLeaderboardTable,
+  CreatorLeaderboardTable,
+  type AmbassadorLeaderboardRow,
+  type CreatorLeaderboardRow,
+} from "@/components/leaderboard-table";
 import { fetchLeaderboard } from "@/lib/api";
 
 export const revalidate = 60;
@@ -8,57 +14,31 @@ export default async function LeaderboardPage({
   searchParams: Promise<{ role?: string }>;
 }) {
   const params = await searchParams;
-  const role = params.role ?? "creator";
-  const { data } = await fetchLeaderboard();
+  const role = params.role === "ambassador" ? "ambassador" : "creator";
+  const { data } = await fetchLeaderboard(role);
 
   return (
     <div>
       <h1 className="page-title">Leaderboard</h1>
-      <p className="page-subtitle">Top creators by volume on Please.market preview markets.</p>
-      <p className="dashboard-nav" style={{ marginTop: 0 }}>
-        <a href="/leaderboard?role=creator">Creators</a>
-        <span style={{ color: "var(--outline)" }}>·</span>
-        <a href="/leaderboard?role=ambassador">Ambassadors</a>
+      <p className="page-subtitle">
+        {role === "ambassador"
+          ? "Top ambassadors by attributed referral volume on Please.market preview markets."
+          : "Top creators by volume on Please.market preview markets."}
       </p>
+      <p className="dashboard-nav" style={{ marginTop: 0 }}>
+        <a href="/leaderboard?role=creator" aria-current={role === "creator" ? "page" : undefined}>
+          Creators
+        </a>
+        <span style={{ color: "var(--outline)" }}>·</span>
+        <a href="/leaderboard?role=ambassador" aria-current={role === "ambassador" ? "page" : undefined}>
+          Ambassadors
+        </a>
+      </p>
+
       {role === "ambassador" ? (
-        <p className="card empty-state">
-          Ambassador ranks populate when position attribution indexer ships on feat/testnet.
-        </p>
+        <AmbassadorLeaderboardTable rows={(data ?? []) as AmbassadorLeaderboardRow[]} />
       ) : (
-        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Creator</th>
-                <th>Volume</th>
-                <th>Trades</th>
-                <th>Markets</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(data ?? []).map(
-                (
-                  row: {
-                    twitter_id: string;
-                    volume_usdc: number;
-                    trade_count: number;
-                    market_count: number;
-                  },
-                  i: number,
-                ) => (
-                  <tr key={row.twitter_id}>
-                    <td>{i + 1}</td>
-                    <td>{row.twitter_id}</td>
-                    <td>${row.volume_usdc}</td>
-                    <td>{row.trade_count}</td>
-                    <td>{row.market_count}</td>
-                  </tr>
-                ),
-              )}
-            </tbody>
-          </table>
-        </div>
+        <CreatorLeaderboardTable rows={(data ?? []) as CreatorLeaderboardRow[]} />
       )}
     </div>
   );

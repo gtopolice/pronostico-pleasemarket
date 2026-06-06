@@ -1,3 +1,9 @@
+@import "tailwindcss";
+@source "../**/*.{ts,tsx}";
+@source "../../vendor/pronostico-apps/packages/ui/cards/**/*.{ts,tsx}";
+@source "../../vendor/pronostico-apps/packages/ui/buttons/**/*.{ts,tsx}";
+@source "../../vendor/pronostico-apps/packages/ui/inputs/**/*.{ts,tsx}";
+
 @import "../styles/anyone-theme.css";
 
 * {
@@ -149,6 +155,46 @@ main,
   border-radius: 16px;
   padding: 1.25rem;
   margin-bottom: 1rem;
+}
+
+.link-x-cta {
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: 16px;
+  padding: clamp(1.5rem, 4vw, 2rem);
+  max-width: 36rem;
+}
+
+.link-x-cta .page-title {
+  margin-bottom: 0.75rem;
+}
+
+.link-x-cta .page-subtitle {
+  margin-bottom: 0;
+}
+
+.link-x-cta__body {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.link-x-cta__status {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.link-x-cta__meta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.link-x-cta__meta strong {
+  color: var(--text-primary);
 }
 
 .btn {
@@ -1154,13 +1200,47 @@ main,
 
 .creator-stats__grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
   margin: 0;
   padding: 0.875rem;
   border-radius: 12px;
   background: var(--surface-container);
   border: 1px solid var(--outline-variant);
+}
+
+@media (min-width: 640px) {
+  .creator-stats__grid--earnings {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.creator-stats__value--accent {
+  color: var(--secondary-container);
+}
+
+.creator-stats__claim-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-top: 0.85rem;
+}
+
+.creator-stats__claim-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.creator-stats__claim-hint--done {
+  margin-top: 0.85rem;
+}
+
+.creator-stats__claim-message {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-yes);
 }
 
 .creator-stats__grid div {
@@ -1375,6 +1455,32 @@ main,
 .modal__footer {
   display: flex;
   justify-content: flex-end;
+}
+
+.leaderboard-table-wrap {
+  padding: 0;
+  overflow: hidden;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 0.85rem 1rem;
+}
+
+.leaderboard-table__creator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.leaderboard-table__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--surface-container-high);
 }
 
 table {

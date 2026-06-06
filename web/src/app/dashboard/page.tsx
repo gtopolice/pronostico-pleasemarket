@@ -7,7 +7,16 @@ import { useEffect, useState } from "react";
 import { CreatorStatsGrid } from "@/components/creator-stats-grid";
 import { DashboardMarketCard } from "@/components/dashboard-market-card";
 import { fetchDemoMarkets, fetchDemoProfile, fetchMeMarkets, fetchMeProfile, walletContextFromUser } from "@/lib/api";
-import { aggregateDummyStats, type MarketRow } from "@/lib/market-display";
+import { loadClaimedEarnings, saveClaimedEarnings } from "@/lib/claimed-earnings";
+import { aggregateDummyStats, withUserClaims, type MarketRow } from "@/lib/market-display";
+
+const EMPTY_STATS = {
+  volume_usdc: 0,
+  trade_count: 0,
+  earned_usdc: 0,
+  claimed_usdc: 0,
+  unclaimed_usdc: 0,
+};
 
 function shortenAddress(address: string) {
   return `${address.slice(0, 6)}…${address.slice(-4)}`;
@@ -17,7 +26,10 @@ export default function DashboardPage() {
   const { ready, authenticated, login, user } = usePrivy();
   const [profile, setProfile] = useState<Record<string, unknown> | null>(null);
   const [markets, setMarkets] = useState<unknown[]>([]);
-  const [stats, setStats] = useState({ volume_usdc: 0, trade_count: 0, earned_usdc: 0 });
+  const [stats, setStats] = useState(EMPTY_STATS);
+  const [userClaimedTotal, setUserClaimedTotal] = useState(0);
+  const [claiming, setClaiming] = useState(false);
+  const [claimMessage, setClaimMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authenticated || !user) return;
@@ -29,11 +41,18 @@ export default function DashboardPage() {
       const p = token ? await fetchMeProfile(token, ctx) : await fetchDemoProfile(ctx);
       const m = token ? await fetchMeMarkets(token, ctx) : await fetchDemoMarkets(ctx);
       const rows = (m.data ?? []) as MarketRow[];
+      const walletKey = ctx.smartWallet ?? ctx.wallet;
       setProfile(p);
       setMarkets(rows);
-      setStats(aggregateDummyStats(rows));
+      setUserClaimedTotal(loadClaimedEarnings(walletKey));
+      setStats(withUserClaims(aggregateDummyStats(rows), loadClaimedEarnings(walletKey)));
     })();
   }, [authenticated, user]);
+
+  useEffect(() => {
+    const rows = markets as MarketRow[];
+    setStats(withUserClaims(aggregateDummyStats(rows), userClaimedTotal));
+  }, [markets, userClaimedTotal]);
 
   const ctx = walletContextFromUser(user ?? null);
   const wallet = ctx.smartWallet ?? ctx.wallet;
@@ -65,13 +84,35 @@ export default function DashboardPage() {
       : walletDisplay;
   const referralCode = String(profile?.referral_code ?? "—");
 
+  async function handleClaim() {
+    if (!wallet || stats.unclaimed_usdc <= 0 || claiming) return;
+    setClaiming(true);
+    setClaimMessage(null);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      const nextClaimed = userClaimedTotal + stats.unclaimed_usdc;
+      setUserClaimedTotal(nextClaimed);
+      saveClaimedEarnings(wallet, nextClaimed);
+      setClaimMessage(`Claimed $${stats.unclaimed_usdc.toFixed(2)} to your wallet.`);
+    } finally {
+      setClaiming(false);
+    }
+  }
+
   return (
     <div>
       <h1 className="page-title">Dashboard</h1>
       <p className="page-subtitle">Your creator profile and markets from @PleaseMarketBot.</p>
 
       <section className="card dashboard-wallet-card" aria-label="Creator stats">
-        <CreatorStatsGrid stats={stats} marketCount={marketRows.length} variant="hero" />
+        <CreatorStatsGrid
+          stats={stats}
+          marketCount={marketRows.length}
+          variant="hero"
+          onClaim={handleClaim}
+          claiming={claiming}
+        />
+        {claimMessage ? <p className="creator-stats__claim-message">{claimMessage}</p> : null}
 
         <div className="dashboard-wallet-card__meta">
           <p className="dashboard-wallet-card__line">

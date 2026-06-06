@@ -52,4 +52,29 @@ html {
   --color-yes-muted: rgba(22, 246, 152, 0.2);
   --color-no-muted: rgba(174, 113, 255, 0.2);
   --auth-button-text: #323200;
+
+  --primary-button-bg: rgba(22, 246, 152, 0.3);
+  --text-on-primary-button: #16f698;
+  --primary-button-bg-active: #16f698;
+  --text-on-primary-button-active: #00391f;
+  --primary-button-bg-disabled: var(--surface-container-high);
+  --text-on-primary-button-disabled: #848484;
+
+  --secondary-button-bg: rgba(148, 73, 243, 0.2);
+  --text-on-secondary-button: #ae71ff;
+  --secondary-button-bg-active: #ae71ff;
+  --text-on-secondary-button-active: #450086;
+  --secondary-button-bg-disabled: var(--surface-container-high);
+  --text-on-secondary-button-disabled: #848484;
+
+  --tertiary-button-bg: rgba(132, 132, 132, 0.2);
+  --text-on-tertiary-button: var(--on-primary-container);
+  --tertiary-button-bg-active: var(--surface-container-high);
+  --text-on-tertiary-button-active: var(--on-surface);
+  --tertiary-button-bg-disabled: var(--surface-container-high);
+  --text-on-tertiary-button-disabled: #848484;
+
+  --outline-button-bg-disabled: transparent;
+  --text-on-outline-button-disabled: #848484;
+  --tertiary-fixed-dim: #ae71ff;
 }

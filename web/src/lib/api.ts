@@ -81,9 +81,10 @@ export async function completeLinkX(
   return data;
 }
 
-export async function fetchLeaderboard(period?: number) {
-  const q = period ? `?period=${period}` : "";
-  const res = await fetch(`${workerBase}/api/leaderboard${q}`, { next: { revalidate: 60 } });
+export async function fetchLeaderboard(role: "creator" | "ambassador" = "creator", period?: number) {
+  const q = new URLSearchParams({ role });
+  if (period) q.set("period", String(period));
+  const res = await fetch(`${workerBase}/api/leaderboard?${q}`, { next: { revalidate: 60 } });
   if (!res.ok) return { data: [] };
   return res.json();
 }

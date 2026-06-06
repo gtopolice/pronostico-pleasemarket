@@ -1,0 +1,19 @@
+{
+  "name": "theme-css",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate:css": "tsx scripts/generate-css.ts",
+    "generate:tailwind": "tsx scripts/generate-tailwind.ts",
+    "generate": "pnpm generate:css && pnpm generate:tailwind"
+  },
+  "devDependencies": {
+    "tsx": "4.21.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.0"
+}

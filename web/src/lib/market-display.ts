@@ -16,7 +16,13 @@ export type MarketDummyStats = {
   volume_usdc: number;
   trade_count: number;
   earned_usdc: number;
+  claimed_usdc: number;
+  unclaimed_usdc: number;
 };
+
+function roundUsd(value: number): number {
+  return Number(value.toFixed(2));
+}
 
 function hashSeed(input: string): number {
   let hash = 0;
@@ -28,10 +34,24 @@ function hashSeed(input: string): number {
 
 export function dummyMarketStats(documentId: string): MarketDummyStats {
   const seed = hashSeed(documentId);
+  const earned_usdc = roundUsd(2 + (seed % 4300) / 100);
+  const claimed_usdc = roundUsd(earned_usdc * ((seed % 65) / 100));
+  const unclaimed_usdc = roundUsd(earned_usdc - claimed_usdc);
   return {
     volume_usdc: 120 + (seed % 4680),
     trade_count: 3 + (seed % 87),
-    earned_usdc: Number(((2 + (seed % 4300) / 100)).toFixed(2)),
+    earned_usdc,
+    claimed_usdc,
+    unclaimed_usdc,
+  };
+}
+
+export function withUserClaims(stats: MarketDummyStats, userClaimedTotal: number): MarketDummyStats {
+  const claimed_usdc = roundUsd(Math.min(stats.earned_usdc, stats.claimed_usdc + userClaimedTotal));
+  return {
+    ...stats,
+    claimed_usdc,
+    unclaimed_usdc: roundUsd(stats.earned_usdc - claimed_usdc),
   };
 }
 
@@ -40,13 +60,23 @@ export function aggregateDummyStats(markets: MarketRow[]): MarketDummyStats {
     (acc, market) => {
       if (!market.documentId) return acc;
       const stats = dummyMarketStats(market.documentId);
+      const earned_usdc = roundUsd(acc.earned_usdc + stats.earned_usdc);
+      const claimed_usdc = roundUsd(acc.claimed_usdc + stats.claimed_usdc);
       return {
         volume_usdc: acc.volume_usdc + stats.volume_usdc,
         trade_count: acc.trade_count + stats.trade_count,
-        earned_usdc: Number((acc.earned_usdc + stats.earned_usdc).toFixed(2)),
+        earned_usdc,
+        claimed_usdc,
+        unclaimed_usdc: roundUsd(earned_usdc - claimed_usdc),
       };
     },
-    { volume_usdc: 0, trade_count: 0, earned_usdc: 0 },
+    {
+      volume_usdc: 0,
+      trade_count: 0,
+      earned_usdc: 0,
+      claimed_usdc: 0,
+      unclaimed_usdc: 0,
+    },
   );
 }
 

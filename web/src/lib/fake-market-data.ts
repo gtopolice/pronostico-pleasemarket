@@ -1,6 +1,8 @@
+import { PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
+
 export type ChartPoint = { x: string; y: number };
 
-export const DEFAULT_MARKET_IMAGE = "https://anyone.market/og-image.png";
+export const DEFAULT_MARKET_IMAGE = PLEASE_MARKET_LOGO_SRC;
 
 function hashString(value: string): number {
   let hash = 0;

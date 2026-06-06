@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { MarketHeroImage } from "@/components/market-hero-image";
 import { MarketPreviewPanel } from "@/components/market-preview-panel";
 import { RulesAccordion } from "@/components/rules-accordion";
-import { DEFAULT_MARKET_IMAGE } from "@/lib/fake-market-data";
+import { creatorAvatarUrl } from "@/lib/creator-avatar";
 
 const apiBase = process.env.NEXT_PUBLIC_PLEASE_API_BASE ?? "http://localhost:8080";
 
@@ -19,12 +19,22 @@ type MarketRecord = {
   hackathon_fallback?: boolean;
   image_url?: string | null;
   image?: { url?: string | null } | null;
+  creator_profile_image_url?: string | null;
+  creator_twitter_handle?: string | null;
 };
+
+const UNUSABLE_MARKET_IMAGES = new Set(["https://anyone.market/og-image.png"]);
 
 function marketImageUrl(market: MarketRecord): string {
   const fromNested = market.image?.url?.trim();
   const fromField = market.image_url?.trim();
-  return fromField || fromNested || DEFAULT_MARKET_IMAGE;
+  const explicit = fromField || fromNested;
+  if (explicit && !UNUSABLE_MARKET_IMAGES.has(explicit)) return explicit;
+
+  return creatorAvatarUrl({
+    creator_profile_image_url: market.creator_profile_image_url,
+    creator_twitter_handle: market.creator_twitter_handle,
+  });
 }
 
 async function fetchMarket(id: string): Promise<{ data: MarketRecord; source: string } | null> {
@@ -109,7 +119,12 @@ export default async function MarketPage({
         </div>
       </div>
 
-      <MarketPreviewPanel marketId={id} isPreview={isPreview} />
+      <MarketPreviewPanel
+        marketId={id}
+        title={title}
+        closeTimeUtc={m.close_time_utc}
+        isPreview={isPreview}
+      />
 
       <RulesAccordion rules={rules} />
 

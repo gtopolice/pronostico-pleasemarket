@@ -25,6 +25,24 @@ function redirectToMarket(url: string, router: ReturnType<typeof useRouter>) {
   window.location.replace(url);
 }
 
+function LinkXCta({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: React.ReactNode;
+  children?: React.ReactNode;
+}) {
+  return (
+    <section className="link-x-cta">
+      <h1 className="page-title">{title}</h1>
+      <p className="page-subtitle">{subtitle}</p>
+      {children ? <div className="link-x-cta__body">{children}</div> : null}
+    </section>
+  );
+}
+
 function LinkXContent() {
   const router = useRouter();
   const params = useSearchParams();
@@ -115,103 +133,111 @@ function LinkXContent() {
   }
 
   if (!token) {
-    return <p className="card">Missing link token. Tag @PleaseMarketBot on X to get a new link.</p>;
+    return (
+      <LinkXCta
+        title="Get a new link"
+        subtitle="Missing link token. Tag @PleaseMarketBot on X to receive a fresh wallet link."
+      />
+    );
   }
 
   if (tokenError) {
-    return <p className="card">{tokenError}</p>;
+    return <LinkXCta title="Link expired" subtitle={tokenError} />;
   }
 
   if (!tokenInfo || !ready) {
-    return <p>Loading…</p>;
+    return (
+      <LinkXCta
+        title="Sign in to publish your market"
+        subtitle="Loading your link…"
+      />
+    );
+  }
+
+  if (linked) {
+    return (
+      <LinkXCta
+        title="You're all set"
+        subtitle={
+          marketUrl
+            ? "Your wallet is linked and your market is ready."
+            : "Your wallet is linked. You can create markets via @PleaseMarketBot on X."
+        }
+      >
+        {status ? <p className="link-x-cta__status">{status}</p> : null}
+        {marketUrl ? (
+          <a className="btn" href={marketUrl}>
+            View your market
+          </a>
+        ) : (
+          <a className="btn" href="/dashboard">
+            Creator dashboard
+          </a>
+        )}
+      </LinkXCta>
+    );
+  }
+
+  if (!authenticated) {
+    return (
+      <LinkXCta
+        title="Sign in to publish your market"
+        subtitle={
+          <>
+            Only <strong>{expectedHandle}</strong> can complete this link. Sign in with that X
+            account and we&apos;ll create your wallet and finish automatically.
+          </>
+        }
+      >
+        <button
+          className="btn"
+          type="button"
+          onClick={() => login({ loginMethods: ["twitter"] })}
+        >
+          Sign in with X as {expectedHandle}
+        </button>
+      </LinkXCta>
+    );
   }
 
   return (
-    <div>
-      <h1>Link X + wallet</h1>
-      <p className="card">
-        Only <strong>{expectedHandle}</strong> can complete this link. Sign in with that X account
-        and we&apos;ll create your wallet and finish automatically.
-      </p>
-
-      {linked ? (
+    <LinkXCta
+      title={linking ? "Linking your wallet…" : "Almost there"}
+      subtitle={
+        linking
+          ? "Hang tight — we're connecting your wallet and finishing setup."
+          : `Signed in as ${twitterAccount?.username ? `@${twitterAccount.username}` : expectedHandle}. Complete the steps below to publish.`
+      }
+    >
+      {!linking ? (
         <>
-          {status && <p style={{ marginTop: "1rem" }}>{status}</p>}
-          {marketUrl ? (
-            <p style={{ marginTop: "0.75rem", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
-              Not redirected?{" "}
-              <a href={marketUrl}>View your market</a>
-            </p>
-          ) : (
-            <p style={{ marginTop: "0.75rem" }}>
-              <a href="/dashboard">Creator dashboard →</a>
-            </p>
-          )}
-        </>
-      ) : !authenticated ? (
-        <>
-          <button
-            className="btn"
-            type="button"
-            onClick={() => login({ loginMethods: ["twitter"] })}
-          >
-            Sign in with X as {expectedHandle}
-          </button>
-          <p style={{ marginTop: "0.75rem", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
-            <button
-              type="button"
-              onClick={() => login({ loginMethods: ["email", "wallet"] })}
-              style={{
-                background: "none",
-                border: "none",
-                padding: 0,
-                color: "var(--text-secondary)",
-                textDecoration: "underline",
-                cursor: "pointer",
-                font: "inherit",
-              }}
-            >
-              Use email or wallet instead
-            </button>
+          <p className="link-x-cta__meta">
+            Wallet: <strong>{wallet ?? "Creating wallet…"}</strong>
           </p>
-        </>
-      ) : (
-        <>
-          {linking ? (
-            <p>Linking your wallet…</p>
-          ) : (
+
+          {!wallet && <p className="link-x-cta__status">Setting up your embedded wallet…</p>}
+
+          {!twitterVerified && (
             <>
-              <p>Wallet: {wallet ?? "Creating wallet…"}</p>
-              <p>
-                X:{" "}
-                {twitterAccount?.username ? `@${twitterAccount.username}` : "Not linked yet"}
+              <button className="btn" type="button" onClick={onLinkTwitter}>
+                Connect X as {expectedHandle}
+              </button>
+              <p className="link-x-cta__status">
+                Or sign out and use &ldquo;Sign in with X&rdquo; with {expectedHandle}.
               </p>
-
-              {!wallet && <p>Setting up your embedded wallet…</p>}
-
-              {!twitterVerified && (
-                <>
-                  <button className="btn" type="button" onClick={onLinkTwitter}>
-                    Connect X as {expectedHandle}
-                  </button>
-                  <p style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
-                    Or sign out and use &ldquo;Sign in with X&rdquo; above.
-                  </p>
-                </>
-              )}
-
-              {twitterVerified && wallet && !linking && (
-                <button className="btn btn--outline" type="button" onClick={() => void onComplete()}>
-                  Complete link
-                </button>
-              )}
             </>
           )}
-        </>
-      )}
 
-      {status && !linked && <p style={{ marginTop: "1rem" }}>{status}</p>}
-    </div>
+          {twitterVerified && wallet && (
+            <button className="btn" type="button" onClick={() => void onComplete()}>
+              Complete link
+            </button>
+          )}
+        </>
+      ) : null}
+
+      {status ? <p className="link-x-cta__status">{status}</p> : null}
+    </LinkXCta>
   );
 }
 

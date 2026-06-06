@@ -1,0 +1,10 @@
+{
+  "name": "@pronostico-apps/common",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "types": "index.ts",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "5.9.3"
+  }
+}
