@@ -1,4 +1,4 @@
-"""FastAPI BFF for Chiwiwis web + X webhook."""
+"""FastAPI BFF for Please.market web + X webhook."""
 
 from __future__ import annotations
 
@@ -31,10 +31,10 @@ from src.x.webhook import handle_mention_payload
 
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Chiwiwis Agent API", version="0.1.0")
+app = FastAPI(title="Please.market Agent API", version="0.1.0")
 
 _cors_origins = {
-    settings.chiwiwis_web_url.rstrip("/"),
+    settings.please_web_url.rstrip("/"),
     "http://localhost:3000",
 }
 if settings.anyone_web_base:
@@ -77,9 +77,9 @@ async def startup() -> None:
 async def health() -> dict:
     return {
         "status": "ok",
-        "dry_run": settings.chiwiwis_dry_run,
+        "dry_run": settings.please_dry_run,
         "deploy_enabled": settings.agent_deploy_enabled,
-        "web_base": settings.chiwiwis_web_url,
+        "web_base": settings.please_web_url,
         "anyone_web_base": settings.anyone_web_base,
     }
 
@@ -173,7 +173,7 @@ async def wallet_lookup(twitter_id: str) -> dict:
 @app.post("/api/link-x/init")
 async def link_x_init(body: LinkInitBody) -> dict:
     token = create_link_token(body.twitter_id, body.twitter_handle, body.tweet_id)
-    web = settings.chiwiwis_web_url.rstrip("/")
+    web = settings.please_web_url.rstrip("/")
     return {"token": token, "link_url": f"{web}/link-x?token={token}"}
 
 
@@ -189,7 +189,7 @@ async def link_x_complete(body: LinkCompleteBody) -> dict:
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:
                 await client.post(
-                    f"{settings.api_url.rstrip('/')}/agent/chiwiwis/link-x/complete",
+                    f"{settings.api_url.rstrip('/')}/agent/please-market/link-x/complete",
                     json={
                         "token": body.token,
                         "wallet_address": link.wallet_address,
@@ -229,7 +229,7 @@ async def x_crc(crc_token: str) -> dict:
 
 
 @app.get("/s/{ref}/{market_id}")
-async def short_link(ref: str, market_id: str, src: str = "chiwiwis_short") -> RedirectResponse:
+async def short_link(ref: str, market_id: str, src: str = "please_market_short") -> RedirectResponse:
     target = f"{settings.anyone_web_base.rstrip('/')}/en/market/{market_id}?ref={ref}&src={src}"
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:

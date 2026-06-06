@@ -1,4 +1,4 @@
-# Chiwiwis — X prediction-market agent for Anyone
+# Please.market — X prediction-market agent for Anyone
 
 Standalone Railway service: Python agent worker + FastAPI BFF + Next.js dashboard.
 
@@ -21,7 +21,7 @@ cd web && npm install && npm run dev
 
 ## Architecture
 
-- **Agent worker** polls X mentions (webhook), parses via LLM, deploys via org `POST /api/agent/chiwiwis/markets/deploy`
+- **Agent worker** polls X mentions (webhook), parses via LLM, deploys via org `POST /api/agent/please-market/markets/deploy`
 - **Org backend** (`pronostico-backend` @ feat/testnet) — Strapi market rows, wallet link, referral clicks
 - **Trades** on [anyone.market](https://anyone.market); Telegram bot picks up via existing Strapi polls
 
@@ -32,8 +32,8 @@ See `docs/ARCHITECTURE.md`, `docs/RUNBOOK.md`, `docs/CONFIG.md`.
 | Variable | Purpose |
 |----------|---------|
 | `AGENT_DEPLOY_ENABLED` | `1` to live-deploy (default off) |
-| `CHIWIWIS_DRY_RUN` | `1` preview replies without deploy |
-| `CHIWIWIS_DEPLOY_ALLOWLIST` | Comma-separated X user ids for testnet |
+| `PLEASE_DRY_RUN` | `1` preview replies without deploy |
+| `PLEASE_DEPLOY_ALLOWLIST` | Comma-separated X user ids for testnet |
 
 ## Deploy
 

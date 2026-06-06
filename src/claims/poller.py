@@ -1,4 +1,4 @@
-"""Poll Strapi /claims and post Cobros to Chiwiwis X timeline."""
+"""Poll Strapi /claims and post Cobros to Please.market X timeline."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ async def run_claims_loop(backend: BackendClient, x: XClient) -> None:
     global _cursor
     while True:
         try:
-            if settings.chiwiwis_claim_post_enabled:
+            if settings.please_claim_post_enabled:
                 await _poll_claims(backend, x)
         except Exception as exc:
             logger.exception("claims loop error: %s", exc)
@@ -41,7 +41,7 @@ async def _poll_claims(backend: BackendClient, x: XClient) -> None:
         _hour_start = now
         _hour_posts = 0
 
-    if _hour_posts >= settings.chiwiwis_claim_post_max_per_hour:
+    if _hour_posts >= settings.please_claim_post_max_per_hour:
         return
 
     rows = await backend.fetch_claims_since(_cursor)
@@ -56,13 +56,13 @@ async def _poll_claims(backend: BackendClient, x: XClient) -> None:
             continue
 
         reward = float(row.get("reward_usdc") or row.get("amount") or 0)
-        if reward < settings.chiwiwis_claim_post_min_usdc:
+        if reward < settings.please_claim_post_min_usdc:
             _cursor = str(redeemed_at)
             continue
 
         market = row.get("market") or {}
-        if settings.chiwiwis_claim_post_only_chiwiwis_markets:
-            if market.get("created_via") != "CHIWIWIS_X":
+        if settings.please_claim_post_only_agent_markets:
+            if market.get("created_via") != "PLEASE_MARKET_X":
                 _cursor = str(redeemed_at)
                 continue
 

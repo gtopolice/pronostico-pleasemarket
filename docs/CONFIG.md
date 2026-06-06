@@ -1,12 +1,12 @@
-# Chiwiwis configuration
+# Please.market configuration
 
 See root `.env.example` and `web/.env.local.example`.
 
 ## Testnet defaults
 
-- `CHIWIWIS_DRY_RUN=1` — parse + preview replies only
+- `PLEASE_DRY_RUN=1` — parse + preview replies only
 - `AGENT_DEPLOY_ENABLED=0` — no Strapi deploy calls
-- `CHIWIWIS_DEPLOY_ALLOWLIST` — restrict to team X user ids
+- `PLEASE_DEPLOY_ALLOWLIST` — restrict to team X user ids
 
 ## Production checklist
 
@@ -14,4 +14,4 @@ See root `.env.example` and `web/.env.local.example`.
 2. Fund agent treasury wallet on Base Sepolia/mainnet
 3. Register X Account Activity webhook → `POST /api/x/webhook`
 4. Privy app id shared with TMA
-5. `CHIWIWIS_WEB_URL` DNS → Railway web service
+5. `PLEASE_WEB_URL` DNS → Railway web service

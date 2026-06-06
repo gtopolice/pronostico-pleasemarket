@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def register_obligation(market_document_id: str, twitter_id: str, close_time: datetime, deploy_tweet_id: str | None) -> None:
-    sla = close_time + timedelta(hours=settings.chiwiwis_resolve_sla_hours)
+    sla = close_time + timedelta(hours=settings.please_resolve_sla_hours)
     with db_conn() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -57,13 +57,13 @@ async def _tick_reminders(x: XClient) -> None:
         if not deploy_tweet:
             continue
         hours_past = (now - row["close_time"]).total_seconds() / 3600
-        if hours_past >= settings.chiwiwis_resolve_sla_hours:
+        if hours_past >= settings.please_resolve_sla_hours:
             _mark_escalation(row["market_document_id"])
             continue
         if hours_past < 1:
-            msg = f"Market closed — resolve within {settings.chiwiwis_resolve_sla_hours}h: {settings.chiwiwis_web_url}/dashboard/resolve"
+            msg = f"Market closed — resolve within {settings.please_resolve_sla_hours}h: {settings.please_web_url}/dashboard/resolve"
         else:
-            msg = f"Reminder: resolve your market ▲ {settings.chiwiwis_web_url}/dashboard/resolve"
+            msg = f"Reminder: resolve your market ▲ {settings.please_web_url}/dashboard/resolve"
         await x.reply(deploy_tweet, msg[:280])
 
 

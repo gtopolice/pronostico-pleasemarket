@@ -1,4 +1,4 @@
-"""Compose Chiwiwis X reply comments."""
+"""Compose Please.market X reply comments."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def compose_deploy_reply(
 ) -> str:
     prefix = "🔍 Preview — " if dry_run else "▲ "
     lines = [
-        f"{prefix}Market live on Anyone",
+        f"{prefix}Market live on Please.market",
         "",
         intent.question,
         "",
@@ -33,7 +33,7 @@ def compose_deploy_reply(
         "",
         "You tagged → you resolve within 48h after close.",
         f"Creator score: {reputation_score:.0f}/100",
-        f"Resolve: {settings.chiwiwis_web_url}/dashboard/resolve",
+        f"Resolve: {settings.please_web_url}/dashboard/resolve",
     ]
     if dry_run:
         lines.append("")

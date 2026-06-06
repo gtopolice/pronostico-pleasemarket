@@ -1,24 +1,26 @@
-const workerBase = process.env.NEXT_PUBLIC_CHIWIWIS_API_BASE ?? "http://localhost:8080";
-const chiwiwisWeb =
-  process.env.NEXT_PUBLIC_CHIWIWIS_WEB_URL ??
+const workerBase = process.env.NEXT_PUBLIC_PLEASE_API_BASE ?? "http://localhost:8080";
+const pleaseWeb =
+  process.env.NEXT_PUBLIC_PLEASE_WEB_URL ??
   (typeof window !== "undefined" ? window.location.origin : "http://localhost:3000");
 
 type WalletContext = { wallet?: string; smartWallet?: string };
 
-async function fetchDemoProfile(ctx: WalletContext) {
-  if (!ctx.wallet) return null;
-  const q = new URLSearchParams({ wallet: ctx.wallet });
+export async function fetchDemoProfile(ctx: WalletContext) {
+  if (!ctx.wallet && !ctx.smartWallet) return null;
+  const q = new URLSearchParams();
+  if (ctx.wallet) q.set("wallet", ctx.wallet);
   if (ctx.smartWallet) q.set("smart_wallet", ctx.smartWallet);
-  const res = await fetch(`${workerBase}/api/demo/profile?${q}`);
+  const res = await fetch(`/api/demo/profile?${q}`);
   if (!res.ok) return null;
   return res.json();
 }
 
-async function fetchDemoMarkets(ctx: WalletContext) {
-  if (!ctx.wallet) return { data: [], stats: {} };
-  const q = new URLSearchParams({ wallet: ctx.wallet });
+export async function fetchDemoMarkets(ctx: WalletContext) {
+  if (!ctx.wallet && !ctx.smartWallet) return { data: [], stats: {} };
+  const q = new URLSearchParams();
+  if (ctx.wallet) q.set("wallet", ctx.wallet);
   if (ctx.smartWallet) q.set("smart_wallet", ctx.smartWallet);
-  const res = await fetch(`${workerBase}/api/demo/markets?${q}`);
+  const res = await fetch(`/api/demo/markets?${q}`);
   if (!res.ok) return { data: [], stats: {} };
   return res.json();
 }
@@ -65,7 +67,7 @@ export async function fetchLeaderboard(period?: number) {
 }
 
 export function shareUrl(marketDoc: string, ref: string, lang = "en") {
-  return `${chiwiwisWeb}/${lang}/market/${marketDoc}?ref=${ref}&src=chiwiwis_share`;
+  return `${pleaseWeb}/${lang}/market/${marketDoc}?ref=${ref}&src=please_market_share`;
 }
 
 export function twitterIntent(text: string, url: string) {
@@ -74,7 +76,7 @@ export function twitterIntent(text: string, url: string) {
 }
 
 export function marketUrl(documentId: string, lang = "en") {
-  return `${chiwiwisWeb}/${lang}/market/${documentId}`;
+  return `${pleaseWeb}/${lang}/market/${documentId}`;
 }
 
 export function walletContextFromUser(user: {
@@ -82,5 +84,9 @@ export function walletContextFromUser(user: {
   linkedAccounts?: Array<{ type?: string; address?: string }>;
 } | null): WalletContext {
   const smartWallet = user?.linkedAccounts?.find((a) => a.type === "smart_wallet")?.address;
-  return { wallet: user?.wallet?.address, smartWallet };
+  const embedded = user?.wallet?.address;
+  return {
+    wallet: embedded ?? smartWallet,
+    smartWallet: smartWallet ?? embedded,
+  };
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const apiBase = process.env.NEXT_PUBLIC_CHIWIWIS_API_BASE ?? "http://localhost:8080";
+const apiBase = process.env.NEXT_PUBLIC_PLEASE_API_BASE ?? "http://localhost:8080";
 
 type MarketRecord = {
   documentId?: string;
@@ -27,8 +27,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const row = await fetchMarket(id);
-  const title = row?.data?.title ?? row?.data?.question ?? "Chiwiwis market";
-  return { title: `${title} — Chiwiwis` };
+  const title = row?.data?.title ?? row?.data?.question ?? "Please.market prediction market";
+  return { title: `${title} — Please.market` };
 }
 
 export default async function MarketPage({
@@ -76,7 +76,7 @@ export default async function MarketPage({
 
       <p style={{ marginTop: "1.5rem" }}>
         <a className="btn" href={`/${lang}/market/${id}`}>
-          View on Chiwiwis
+          View on Please.market
         </a>{" "}
         {!m.hackathon_fallback && !m.dry_run && (
           <a className="btn" href={`${anyoneBase}/${lang}/market/${id}`} style={{ marginLeft: "0.5rem" }}>
@@ -86,7 +86,7 @@ export default async function MarketPage({
       </p>
 
       <p style={{ marginTop: "1rem", opacity: 0.8 }}>
-        Created via @Chiwiwis — creator resolves within 48h after close.
+        Created via @PleaseMarket — creator resolves within 48h after close.
       </p>
     </div>
   );

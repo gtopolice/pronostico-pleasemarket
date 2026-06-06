@@ -77,16 +77,16 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
     )
 
     text_lower = ctx.text.lower()
-    handle = settings.chiwiwis_x_handle.lower()
+    handles = {settings.please_x_handle.lower(), "chiwiwis", "pleasemarket", "please.market"}
 
     if _SHARE_RE.search(ctx.text) or _AMP_RE.search(ctx.text):
         await _handle_share_command(ctx, backend, x)
         return
 
-    if handle not in text_lower and f"@{handle}" not in text_lower:
+    if not any(h in text_lower or f"@{h}" in text_lower for h in handles):
         return
 
-    if is_kill_switch_active() and not settings.chiwiwis_dry_run:
+    if is_kill_switch_active() and not settings.please_dry_run:
         reply_id = await x.reply(tweet_id, compose_reject_reply("Agent paused for maintenance."))
         record_mention(tweet_id, author_id, "rejected", reply_tweet_id=reply_id)
         return
@@ -103,7 +103,7 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
         record_mention(tweet_id, author_id, "restricted", reply_tweet_id=reply_id)
         return
 
-    if not is_allowlisted(author_id) and not settings.chiwiwis_dry_run:
+    if not is_allowlisted(author_id) and not settings.please_dry_run:
         reply_id = await x.reply(tweet_id, compose_reject_reply("Testnet allowlist only for now."))
         record_mention(tweet_id, author_id, "not_allowlisted", reply_tweet_id=reply_id)
         return
@@ -111,7 +111,7 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
     wallet = await _resolve_wallet_async(author_id, backend)
     if not wallet:
         token = create_link_token(author_id, ctx.author_handle, tweet_id)
-        link_url = f"{settings.chiwiwis_web_url.rstrip('/')}/link-x?token={token}"
+        link_url = f"{settings.please_web_url.rstrip('/')}/link-x?token={token}"
         reply_id = await x.reply(tweet_id, compose_link_wallet_reply(link_url))
         record_mention(tweet_id, author_id, "link_required", reply_tweet_id=reply_id)
         return
@@ -124,7 +124,7 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
         audit("moderation_reject", author_id, tweet_id, {"reason": mod_msg})
         return
 
-    dry = settings.chiwiwis_dry_run or not settings.agent_deploy_enabled
+    dry = settings.please_dry_run or not settings.agent_deploy_enabled
     if dry:
         doc_id = str(uuid.uuid4())
         creator = wallet.get("smart_wallet_address") or wallet["wallet_address"]
@@ -141,7 +141,7 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
                 "creator_wallet": creator,
             },
         )
-        preview_url = f"{settings.chiwiwis_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"
+        preview_url = f"{settings.please_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"
         reply = compose_deploy_reply(intent, preview_url, doc_id, get_score(author_id), dry_run=True)
         reply_id = await x.reply(tweet_id, reply)
         record_mention(tweet_id, author_id, "dry_run", doc_id, reply_id)
@@ -156,7 +156,7 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
         wallet.get("smart_wallet_address"),
     )
     doc_id = result.get("documentId", "")
-    market_url = result.get("market_url") or f"{settings.chiwiwis_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"
+    market_url = result.get("market_url") or f"{settings.please_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"
     reply = compose_deploy_reply(intent, market_url, doc_id, get_score(author_id))
     reply_id = await x.reply(tweet_id, reply)
 
@@ -176,7 +176,7 @@ async def _handle_share_command(ctx: TweetContext, backend: BackendClient, x: XC
 
     m = _SHARE_RE.search(ctx.text)
     doc_id = m.group(1) if m else "market"
-    url = f"{settings.chiwiwis_web_url.rstrip('/')}/en/market/{doc_id}?ref={ref}&src=chiwiwis_x"
+    url = f"{settings.please_web_url.rstrip('/')}/en/market/{doc_id}?ref={ref}&src=please_market_x"
     await x.reply(ctx.tweet_id, compose_share_reply("Trade this market ▲", url))
 
 

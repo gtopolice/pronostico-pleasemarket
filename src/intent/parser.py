@@ -28,7 +28,7 @@ def _fallback_intent(ctx: TweetContext) -> MarketIntent:
     close = datetime.now(timezone.utc) + timedelta(days=7)
     return MarketIntent(
         question=prompt[:280] or "Will this event happen?",
-        title=(prompt[:117] + "...") if len(prompt) > 120 else prompt[:120] or "Chiwiwis market",
+        title=(prompt[:117] + "...") if len(prompt) > 120 else prompt[:120] or "Please.market market",
         resolution_rules=(
             "Resolves YES if the stated condition in the question occurs before close time. "
             "Otherwise NO. Creator resolves using published rules and credible public sources."
@@ -48,7 +48,7 @@ async def parse_market_intent(ctx: TweetContext) -> MarketIntent:
 
     client = OpenAI(api_key=settings.openai_api_key)
     system = (
-        "You are Chiwiwis, Anyone's X prediction-market agent. "
+        "You are Please.market, Anyone's X prediction-market agent. "
         "Convert user prompts into binary prediction markets. "
         "Output JSON only. Set reject=true for illegal content, spam, or unparseable prompts. "
         "close_time must be ISO8601 UTC, at least 24h and at most 90 days from now."
@@ -64,7 +64,7 @@ async def parse_market_intent(ctx: TweetContext) -> MarketIntent:
 
     try:
         response = client.chat.completions.create(
-            model=settings.chiwiwis_llm_model,
+            model=settings.please_llm_model,
             response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": system},

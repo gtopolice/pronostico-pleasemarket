@@ -3,8 +3,8 @@ import { AppPrivyProvider } from "@/components/privy-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Chiwiwis — Anyone on X",
-  description: "Create prediction markets by tagging @Chiwiwis on X",
+  title: "Please.market — prediction markets on X",
+  description: "Create prediction markets by tagging @PleaseMarket on X",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <AppPrivyProvider>
           <header className="site-header">
-            <a href="/">Chiwiwis</a>
+            <a href="/">Please.market</a>
             <nav>
               <a href="/leaderboard">Leaderboard</a>
               <a href="/dashboard">Dashboard</a>

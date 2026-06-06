@@ -1,4 +1,4 @@
-"""Postgres connection pool for Chiwiwis agent."""
+"""Postgres connection pool for Please.market agent."""
 
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ def init_db() -> None:
             with open(__file__.replace("pool.py", "schema.sql"), encoding="utf-8") as f:
                 cur.execute(f.read())
         conn.commit()
-    logger.info("Chiwiwis DB schema initialized")
+    logger.info("Please.market DB schema initialized")
 
 
 @contextmanager

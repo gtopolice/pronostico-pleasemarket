@@ -37,11 +37,11 @@ def audit(event_type: str, twitter_id: str | None = None, tweet_id: str | None =
 
 
 def is_kill_switch_active() -> bool:
-    return settings.chiwiwis_global_kill_switch or not settings.agent_deploy_enabled
+    return settings.please_global_kill_switch or not settings.agent_deploy_enabled
 
 
 def check_user_rate_limit(twitter_id: str) -> tuple[bool, str | None]:
-    limit = settings.chiwiwis_rate_limit_per_user_day
+    limit = settings.please_rate_limit_per_user_day
     with db_conn() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -74,7 +74,7 @@ def moderate_intent(ctx: TweetContext, intent: MarketIntent) -> tuple[bool, str 
         return False, "Too many links — try a simpler market prompt."
 
     if intent.confidence < 0.35:
-        return False, "I couldn't understand that market. Try: @Chiwiwis Will X happen by [date]?"
+        return False, "I couldn't understand that market. Try: @PleaseMarket Will X happen by [date]?"
 
     now = datetime.now(timezone.utc)
     if intent.close_time <= now:

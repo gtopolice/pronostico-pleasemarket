@@ -1,4 +1,4 @@
-"""Chiwiwis agent entrypoint."""
+"""Please.market agent entrypoint."""
 
 from __future__ import annotations
 

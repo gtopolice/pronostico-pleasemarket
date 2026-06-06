@@ -1,4 +1,4 @@
-"""Org backend client for Chiwiwis deploy + wallet link."""
+"""Org backend client for Please.market deploy + wallet link."""
 
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ class BackendClient:
     async def wallet_by_twitter(self, twitter_id: str) -> dict[str, Any] | None:
         async with httpx.AsyncClient(timeout=30.0) as client:
             r = await client.get(
-                f"{self.base}/agent/chiwiwis/wallet/{twitter_id}",
+                f"{self.base}/agent/please-market/wallet/{twitter_id}",
                 headers=self._agent_headers(),
             )
             if r.status_code == 404:
@@ -45,7 +45,7 @@ class BackendClient:
     async def init_link_x(self, twitter_id: str, twitter_handle: str | None, tweet_id: str) -> dict[str, Any]:
         async with httpx.AsyncClient(timeout=30.0) as client:
             r = await client.post(
-                f"{self.base}/agent/chiwiwis/link-x/init",
+                f"{self.base}/agent/please-market/link-x/init",
                 headers=self._agent_headers(),
                 json={"twitter_id": twitter_id, "twitter_handle": twitter_handle, "tweet_id": tweet_id},
             )
@@ -70,12 +70,12 @@ class BackendClient:
             "source_tweet_url": ctx.tweet_url,
             "twitter_handle": ctx.author_handle,
             "locale": intent.locale,
-            "creator_fee_bps": settings.chiwiwis_default_creator_fee_bps,
-            "image_url": settings.chiwiwis_default_image_url,
+            "creator_fee_bps": settings.please_default_creator_fee_bps,
+            "image_url": settings.please_default_image_url,
         }
         async with httpx.AsyncClient(timeout=60.0) as client:
             r = await client.post(
-                f"{self.base}/agent/chiwiwis/markets/deploy",
+                f"{self.base}/agent/please-market/markets/deploy",
                 headers=self._agent_headers(),
                 json=payload,
             )
@@ -106,6 +106,6 @@ class BackendClient:
         if period:
             params["period"] = str(period)
         async with httpx.AsyncClient(timeout=30.0) as client:
-            r = await client.get(f"{self.base}/agent/chiwiwis/leaderboard", params=params)
+            r = await client.get(f"{self.base}/agent/please-market/leaderboard", params=params)
             r.raise_for_status()
             return (r.json().get("data") or [])

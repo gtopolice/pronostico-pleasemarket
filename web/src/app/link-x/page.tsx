@@ -20,14 +20,14 @@ function LinkXContent() {
     if (!token || !wallet) return;
     try {
       await completeLinkX(token, wallet, smartWallet?.address);
-      setStatus("Wallet linked! You can create markets via @Chiwiwis on X.");
+      setStatus("Wallet linked! You can create markets via @PleaseMarket on X.");
     } catch {
       setStatus("Link failed — token may have expired.");
     }
   }
 
   if (!token) {
-    return <p className="card">Missing link token. Tag @Chiwiwis on X to get a new link.</p>;
+    return <p className="card">Missing link token. Tag @PleaseMarket on X to get a new link.</p>;
   }
 
   if (!ready) return <p>Loading…</p>;

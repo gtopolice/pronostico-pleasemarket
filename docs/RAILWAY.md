@@ -1,30 +1,30 @@
-# Chiwiwis Railway deploy (hackathon demo)
+# Please.market Railway deploy (hackathon demo)
 
 Three services in one project:
 
 | Service | Config | Port |
 |---------|--------|------|
 | **Postgres** | Railway plugin | — |
-| **chiwiwis-worker** | Root `Dockerfile` + `railway.toml` | `$PORT` → `/health` |
-| **chiwiwis-web** | `web/Dockerfile`, set **Root Directory** = `web` | 3000 |
+| **pleasemarket-worker** | Root `Dockerfile` + `railway.toml` | `$PORT` → `/health` |
+| **pleasemarket-web** | `web/Dockerfile`, set **Root Directory** = `web` | 3000 |
 
 ## 1. Create project
 
 ```bash
-cd pronostico-chiwiwis
-git init && git add . && git commit -m "Chiwiwis hackathon demo"
-railway init --name chiwiwis
+cd pronostico-pleasemarket
+git init && git add . && git commit -m "Please.market hackathon demo"
+railway init --name pleasemarket
 railway add --database postgres
 ```
 
-Link Postgres `DATABASE_URL` to **chiwiwis-worker** (Reference Variable).
+Link Postgres `DATABASE_URL` to **pleasemarket-worker** (Reference Variable).
 
 ## 2. Worker env
 
 ```
-CHIWIWIS_WEB_URL=https://<chiwiwis-web>.up.railway.app
-ANYONE_WEB_BASE=https://<chiwiwis-web>.up.railway.app
-CHIWIWIS_DRY_RUN=1
+PLEASE_WEB_URL=https://<pleasemarket-web>.up.railway.app
+ANYONE_WEB_BASE=https://<pleasemarket-web>.up.railway.app
+PLEASE_DRY_RUN=1
 AGENT_DEPLOY_ENABLED=0
 OPENAI_API_KEY=<your key>
 DATABASE_URL=${{Postgres.DATABASE_URL}}
@@ -55,15 +55,15 @@ Create a second service, set **Root Directory** to `web`, deploy `web/Dockerfile
 Build args / env at deploy time:
 
 ```
-NEXT_PUBLIC_CHIWIWIS_API_BASE=https://<chiwiwis-worker>.up.railway.app
-NEXT_PUBLIC_CHIWIWIS_WEB_URL=https://<chiwiwis-web>.up.railway.app
+NEXT_PUBLIC_PLEASE_API_BASE=https://<pleasemarket-worker>.up.railway.app
+NEXT_PUBLIC_PLEASE_WEB_URL=https://<pleasemarket-web>.up.railway.app
 NEXT_PUBLIC_ANYONE_WEB_BASE=https://anyone.market
 NEXT_PUBLIC_PRIVY_APP_ID=
 NEXT_PUBLIC_PRIVY_CLIENT_ID=
 API_URL=
 ```
 
-After web URL is known, update worker `CHIWIWIS_WEB_URL` and `ANYONE_WEB_BASE` to match.
+After web URL is known, update worker `PLEASE_WEB_URL` and `ANYONE_WEB_BASE` to match.
 
 ## 4. Smoke test
 
@@ -71,14 +71,14 @@ After web URL is known, update worker `CHIWIWIS_WEB_URL` and `ANYONE_WEB_BASE` t
 curl https://<worker>/health
 curl https://<worker>/api/leaderboard
 curl -X POST https://<worker>/api/x/webhook -H 'Content-Type: application/json' \
-  -d '{"tweet_id":"t1","author_id":"u1","author_handle":"demo","text":"@Chiwiwis Will it rain in CDMX tomorrow by 6pm?"}'
+  -d '{"tweet_id":"t1","author_id":"u1","author_handle":"demo","text":"@PleaseMarket Will it rain in CDMX tomorrow by 6pm?"}'
 curl https://<web>/en/market/<documentId-from-reply>
 ```
 
 ## 5. Go live on X
 
-1. Set `CHIWIWIS_DRY_RUN=0`, `AGENT_DEPLOY_ENABLED=1`
-2. Set `CHIWIWIS_DEPLOY_ALLOWLIST` to your X user id(s)
+1. Set `PLEASE_DRY_RUN=0`, `AGENT_DEPLOY_ENABLED=1`
+2. Set `PLEASE_DEPLOY_ALLOWLIST` to your X user id(s)
 3. Register X webhook URL → `https://<worker>/api/x/webhook`
 
-Without org backend, deploy falls back to **demo_markets** in agent Postgres — full create → view → dashboard loop on Chiwiwis web.
+Without org backend, deploy falls back to **demo_markets** in agent Postgres — full create → view → dashboard loop on Please.market web.

@@ -1,4 +1,4 @@
--- Chiwiwis agent Postgres schema
+-- Please.market agent Postgres schema
 
 CREATE TABLE IF NOT EXISTS processed_mentions (
     tweet_id TEXT PRIMARY KEY,
