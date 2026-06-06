@@ -61,6 +61,8 @@ interface CheckoutCardProps {
   hideSellTab?: boolean;
   /** Potential win amount (for V3 markets - calculated via CPMM formula) */
   potentialWin?: string;
+  /** Demo stablecoin ticker (e.g. MXNB) — suffix instead of $ prefix */
+  demoCurrency?: string;
   dictionary?: Dictionary;
   labels?: {
     profit?: string;
@@ -104,7 +106,14 @@ export function CheckoutCard(props: CheckoutCardProps) {
     hideSellTab,
     potentialWin,
     labels = {},
+    demoCurrency,
   } = props;
+
+  const formatMoney = (value: number | string, digits = 2) => {
+    const formatted = formatNumber(Number(value), digits);
+    if (demoCurrency) return `${formatted} ${demoCurrency}`;
+    return `$${formatted}`;
+  };
 
   // Force selectedTab to 1 (Comprar) when hideSellTab is enabled
   useEffect(() => {
@@ -226,12 +235,14 @@ export function CheckoutCard(props: CheckoutCardProps) {
               {l.amount}
             </span>
             <span className="text-[12px] leading-[16px] tracking-[0.4px] font-[400] text-[var(--surface-tint)]">
-              {`${l.balance}: $${formatNumber(balances.usdc, 2)}`}
+              {`${l.balance}: ${formatMoney(balances.usdc, 2)}`}
             </span>
           </div>
           <div className="flex flex-col items-end">
             <div className="flex flex-row items-center gap-1">
-              <span className="text-[24px] leading-[32px] tracking-[0px] font-[700] text-[var(--primary)]">$</span>
+              {!demoCurrency ? (
+                <span className="text-[24px] leading-[32px] tracking-[0px] font-[700] text-[var(--primary)]">$</span>
+              ) : null}
               <AmountInput
                 // step={0.01}
                 // max={1000}
@@ -247,6 +258,11 @@ export function CheckoutCard(props: CheckoutCardProps) {
                 }}
                 className="w-[80px] text-[24px] leading-[32px] tracking-[0px] font-[700] text-[var(--primary)]"
               />
+              {demoCurrency ? (
+                <span className="text-[14px] leading-[20px] font-[600] text-[var(--surface-tint)] ml-1">
+                  {demoCurrency}
+                </span>
+              ) : null}
             </div>
             {selectedTab === 1 && amount > Number(balances.usdc) && (
               <span className="text-[12px] leading-[16px] tracking-[0.4px] font-[400] text-[var(--error)]">
@@ -300,7 +316,7 @@ export function CheckoutCard(props: CheckoutCardProps) {
               size="small"
               variant="outline"
               key={amt}
-              label={`$${amt}`}
+              label={demoCurrency ? `${amt} ${demoCurrency}` : `$${amt}`}
               sx={{
                 padding: "7px 8px !important",
                 minWidth: "35px",
@@ -360,12 +376,11 @@ export function CheckoutCard(props: CheckoutCardProps) {
               </span> */}
             </div>
             <span className="text-[24px] leading-[32px] tracking-[0px] font-[700] text-[var(--tertiary-fixed-dim)]">
-              $
-              {formatNumber(
+              {formatMoney(
                 selectedTab === 1
                   ? (potentialWin ? Number(potentialWin) : Number(tokenAmount))
                   : Number(estCost),
-                2
+                2,
               )}
             </span>
           </div>
@@ -374,7 +389,9 @@ export function CheckoutCard(props: CheckoutCardProps) {
       <div className="flex flex-row justify-between gap-2 text-[var(--primary)] text-[12px] px-5">
         <div className="bg-[var(--surface-container-high)] rounded-[12px] w-full flex flex-col items-center justify-center py-1">
           <div className="roi-cell-label">{labels?.avgPrice ?? "AVG price"}</div>
-          <div className="roi-cell-val white" id="m-tokens">${formatNumber(Number(estCost) / (Number(tokenAmount) || 1), 2)}</div>
+          <div className="roi-cell-val white" id="m-tokens">
+            {formatMoney(Number(estCost) / (Number(tokenAmount) || 1), 2)}
+          </div>
         </div>
         <div className="bg-[var(--surface-container-high)] rounded-[12px] w-full flex flex-col items-center justify-center py-1">
           <div className="roi-cell-label">{labels?.shares ?? "Shares"}</div>

@@ -5,6 +5,7 @@ import { MarketPreviewPanel } from "@/components/market-preview-panel";
 import { RulesAccordion } from "@/components/rules-accordion";
 import { BRAND_LINKS } from "@/lib/brand";
 import { creatorAvatarUrl } from "@/lib/creator-avatar";
+import { getMessages, normalizeLocale } from "@/lib/i18n";
 import { upsizeTwitterProfileImageUrl } from "@/lib/twitter-profile-image";
 
 const apiBase = process.env.NEXT_PUBLIC_PLEASE_API_BASE ?? "http://localhost:8080";
@@ -47,10 +48,10 @@ async function fetchMarket(id: string): Promise<{ data: MarketRecord; source: st
   return res.json();
 }
 
-function marketKindLabel(m: MarketRecord) {
-  if (m.dry_run) return "Preview";
-  if (m.hackathon_fallback) return "Hackathon";
-  return "Live";
+function marketKindLabel(m: MarketRecord, t: ReturnType<typeof getMessages>) {
+  if (m.dry_run) return t.market.badgePreview;
+  if (m.hackathon_fallback) return t.market.badgeHackathon;
+  return t.market.badgeLive;
 }
 
 function marketKindClass(m: MarketRecord) {
@@ -61,7 +62,7 @@ function marketKindClass(m: MarketRecord) {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ lang: string; id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
   const row = await fetchMarket(id);
@@ -75,32 +76,42 @@ export default async function MarketPage({
   params: Promise<{ lang: string; id: string }>;
 }) {
   const { lang, id } = await params;
+  const locale = normalizeLocale(lang);
+  const t = getMessages(locale);
   const row = await fetchMarket(id);
 
   if (!row?.data) {
     return (
       <div>
-        <h1 className="page-title">Market not found</h1>
-        <p className="card empty-state">No market with id {id}.</p>
+        <h1 className="page-title">{t.market.notFound}</h1>
+        <p className="card empty-state">{t.market.notFoundDetail.replace("{id}", id)}</p>
       </div>
     );
   }
 
   const m = row.data;
-  const close = m.close_time_utc ? new Date(m.close_time_utc).toLocaleString() : "—";
+  const close = m.close_time_utc
+    ? new Date(m.close_time_utc).toLocaleString(locale === "es" ? "es-MX" : "en-US")
+    : "—";
   const anyoneBase = process.env.NEXT_PUBLIC_ANYONE_WEB_BASE ?? "https://anyone.market";
-  const rules = m.resolution_rules ?? m.description ?? "No resolution rules provided.";
-  const title = m.title ?? m.question ?? "Prediction market";
+  const rules = m.resolution_rules ?? m.description ?? t.market.rulesFallback;
+  const title = m.title ?? m.question ?? t.market.untitled;
   const isPreview = Boolean(m.dry_run || m.hackathon_fallback);
   const imageUrl = marketImageUrl(m);
+  const composeTweet =
+    locale === "es"
+      ? "https://x.com/compose/tweet?text=@PleaseMarketBot%20"
+      : "https://x.com/compose/tweet?text=@PleaseMarketBot%20";
 
   return (
     <article>
       <div className="market-hero">
         <div className="badge-row">
-          <span className={marketKindClass(m)}>{marketKindLabel(m)}</span>
-          <span className="badge">{m.state ?? "Unknown state"}</span>
-          <span className="badge badge--closed">Source: {row.source}</span>
+          <span className={marketKindClass(m)}>{marketKindLabel(m, t)}</span>
+          {m.state && !m.dry_run ? <span className="badge">{m.state}</span> : null}
+          <span className="badge badge--closed">
+            {t.market.source}: {row.source}
+          </span>
         </div>
 
         <div className="market-hero__row">
@@ -115,10 +126,10 @@ export default async function MarketPage({
 
         <div className="market-hero__meta">
           <span>
-            <strong>Closes:</strong> {close}
+            <strong>{t.market.closes}:</strong> {close}
           </span>
           <span>
-            <strong>Creator resolves</strong> within 48h after close
+            <strong>{t.market.creatorResolves}</strong>
           </span>
         </div>
       </div>
@@ -128,36 +139,32 @@ export default async function MarketPage({
         title={title}
         closeTimeUtc={m.close_time_utc}
         isPreview={isPreview}
+        locale={locale}
       />
 
       <RulesAccordion rules={rules} />
 
       <div className="hero__actions" style={{ marginTop: "1.5rem" }}>
         {!isPreview ? (
-          <a className="btn" href={`${anyoneBase}/${lang}/market/${id}`}>
-            Trade on Anyone
+          <a className="btn" href={`${anyoneBase}/${locale}/market/${id}`}>
+            {t.market.tradeOnAnyone}
           </a>
         ) : (
           <span className="btn btn--outline" style={{ cursor: "default" }}>
-            Preview only — dry run
+            {t.market.hackathonPreview}
           </span>
         )}
-        <a
-          className="btn btn--tertiary"
-          href="https://x.com/compose/tweet?text=@PleaseMarketBot%20"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Create another on X
+        <a className="btn btn--tertiary" href={composeTweet} target="_blank" rel="noopener noreferrer">
+          {t.market.createAnother}
         </a>
       </div>
 
       <p className="empty-state" style={{ marginTop: "1.25rem" }}>
-        Created via{" "}
+        {t.market.createdVia}{" "}
         <a href={BRAND_LINKS.pleaseMarket.x} target="_blank" rel="noopener noreferrer">
           @PleaseMarketBot
         </a>{" "}
-        on X.
+        {t.market.onX}
       </p>
     </article>
   );

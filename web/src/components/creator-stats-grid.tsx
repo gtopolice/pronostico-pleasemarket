@@ -1,4 +1,5 @@
 import type { MarketDummyStats } from "@/lib/market-display";
+import { formatDemoAmount } from "@/lib/demo-currency";
 
 type CreatorStatsGridProps = {
   stats: MarketDummyStats;
@@ -31,7 +32,7 @@ export function CreatorStatsGrid({
       <dl className="creator-stats__grid creator-stats__grid--earnings">
         <div>
           <dt>Volume</dt>
-          <dd>${stats.volume_usdc.toLocaleString()}</dd>
+          <dd>{formatDemoAmount(stats.volume_usdc, 0)}</dd>
         </div>
         <div>
           <dt>Trades</dt>
@@ -39,11 +40,11 @@ export function CreatorStatsGrid({
         </div>
         <div>
           <dt>Unclaimed</dt>
-          <dd className="creator-stats__value--accent">${stats.unclaimed_usdc.toFixed(2)}</dd>
+          <dd className="creator-stats__value--accent">{formatDemoAmount(stats.unclaimed_usdc)}</dd>
         </div>
         <div>
           <dt>Claimed</dt>
-          <dd>${stats.claimed_usdc.toFixed(2)}</dd>
+          <dd>{formatDemoAmount(stats.claimed_usdc)}</dd>
         </div>
       </dl>
       {canClaim ? (
@@ -54,7 +55,7 @@ export function CreatorStatsGrid({
             disabled={claiming}
             onClick={onClaim}
           >
-            {claiming ? "Claiming…" : `Claim $${stats.unclaimed_usdc.toFixed(2)}`}
+            {claiming ? "Claiming…" : `Claim ${formatDemoAmount(stats.unclaimed_usdc)}`}
           </button>
           <p className="creator-stats__claim-hint">Creator fees from your markets (demo preview).</p>
         </div>

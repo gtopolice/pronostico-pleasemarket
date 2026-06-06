@@ -43,9 +43,8 @@ export function fakeChartPoints(marketId: string, selectedShare: "YES" | "NO"): 
   return points;
 }
 
+import { formatDemoAmountCompact } from "@/lib/demo-currency";
+
 export function formatUsd(value: number, digits = 2): string {
-  return value.toLocaleString("en-US", {
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
-  });
+  return formatDemoAmountCompact(value, digits);
 }

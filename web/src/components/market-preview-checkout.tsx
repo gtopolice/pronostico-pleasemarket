@@ -4,13 +4,16 @@ import { CheckoutCard } from "../../vendor/pronostico-apps/packages/ui/cards/che
 import { Market, MarketType, State } from "@pronostico-apps/interfaces";
 import { useEffect, useMemo, useState } from "react";
 
+import { DEMO_STABLECOIN } from "@/lib/demo-currency";
 import { fakeMarketStats } from "@/lib/fake-market-data";
+import { getMessages, type Locale } from "@/lib/i18n";
 
 type MarketPreviewCheckoutProps = {
   marketId: string;
   title: string;
   closeTimeUtc?: string | null;
   isPreview: boolean;
+  locale?: Locale;
 };
 
 export function MarketPreviewCheckout({
@@ -18,6 +21,7 @@ export function MarketPreviewCheckout({
   title,
   closeTimeUtc,
   isPreview,
+  locale = "es",
 }: MarketPreviewCheckoutProps) {
   const [selectedTab, setSelectedTab] = useState(1);
   const [buyYes, setBuyYes] = useState(true);
@@ -29,6 +33,7 @@ export function MarketPreviewCheckout({
   const demoStats = useMemo(() => fakeMarketStats(marketId), [marketId]);
   const priceYes = demoStats.priceYes;
   const priceNo = demoStats.priceNo;
+  const t = getMessages(locale);
 
   const market = useMemo(
     (): Market =>
@@ -99,33 +104,34 @@ export function MarketPreviewCheckout({
       setAmount={setAmount}
       tokenAmount={tokenAmount}
       estCost={estCost}
-      balances={{ usdc: "250", yes: 0, no: 0 }}
+      demoCurrency={DEMO_STABLECOIN}
+      balances={{ usdc: "2500", yes: 0, no: 0 }}
       stats={{ priceYes, priceNo }}
       isLoading
       hideSellTab
       potentialWin={potentialWin}
       onTrade={async () => {}}
       labels={{
-        amount: "Amount",
-        balance: "Balance",
-        buy: "Buy",
-        sell: "Sell",
-        yes: "Yes",
-        no: "No",
-        max: "Max",
-        profit: "Potential win",
-        youWillReceive: "You will receive",
-        predicting: isPreview ? "Preview only — dry run" : "Trade on Anyone",
-        buyYes: "Buy Yes",
-        buyNo: "Buy No",
-        sellYes: "Sell Yes",
-        sellNo: "Sell No",
-        insufficientShares: "Insufficient shares",
-        insufficientBalance: "Insufficient balance",
-        shares: "Shares",
-        avgPrice: "Avg price",
-        roiActual: "ROI actual",
-        roiPot: "ROI pot.",
+        amount: t.market.amount,
+        balance: t.market.balance,
+        buy: t.market.buy,
+        sell: t.market.sell,
+        yes: t.market.yes,
+        no: t.market.no,
+        max: t.market.max,
+        profit: t.market.potentialWin,
+        youWillReceive: t.market.potentialWin,
+        predicting: isPreview ? t.market.previewTrade : t.market.tradeOnAnyone,
+        buyYes: t.market.buyYes,
+        buyNo: t.market.buyNo,
+        sellYes: t.market.sell,
+        sellNo: t.market.sell,
+        insufficientShares: t.market.balance,
+        insufficientBalance: t.market.insufficientBalance,
+        shares: t.market.amount,
+        avgPrice: t.market.amount,
+        roiActual: t.market.potentialWin,
+        roiPot: t.market.potentialWin,
       }}
     />
   );

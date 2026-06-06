@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 
 import { AppPrivyProvider } from "@/components/privy-provider";
+import { AppLocaleShell } from "@/components/app-locale-shell";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
@@ -27,11 +28,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`dark ${roboto.variable}`}>
       <body>
         <AppPrivyProvider>
-          <div className="site-shell">
-            <SiteHeader />
-            <main>{children}</main>
-            <SiteFooter />
-          </div>
+          <AppLocaleShell>
+            <div className="site-shell">
+              <SiteHeader />
+              <main>{children}</main>
+              <SiteFooter />
+            </div>
+          </AppLocaleShell>
         </AppPrivyProvider>
       </body>
     </html>

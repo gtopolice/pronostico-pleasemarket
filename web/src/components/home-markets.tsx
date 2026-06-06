@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { MarketListCard } from "@/components/market-list-card";
+import { getMessages, type Locale } from "@/lib/i18n";
 
 type HomeMarket = {
   documentId?: string;
@@ -13,8 +14,9 @@ type HomeMarket = {
   creator_profile_image_url?: string | null;
 };
 
-export function HomeMarkets() {
+export function HomeMarkets({ lang = "es" }: { lang?: Locale }) {
   const [markets, setMarkets] = useState<HomeMarket[] | null>(null);
+  const t = getMessages(lang);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,14 +37,12 @@ export function HomeMarkets() {
 
   return (
     <section className="home-markets">
-      <h2 className="home-markets__title">Markets from @PleaseMarketBot</h2>
-      <p className="home-markets__subtitle">Recent preview markets created on X.</p>
+      <h2 className="home-markets__title">{t.home.marketsTitle}</h2>
+      <p className="home-markets__subtitle">{t.home.marketsSubtitle}</p>
       {markets === null ? (
-        <p className="card empty-state">Loading markets…</p>
+        <p className="card empty-state">{t.home.marketsLoading}</p>
       ) : markets.length === 0 ? (
-        <p className="card empty-state">
-          No markets yet. Tag @PleaseMarketBot on X to create the first one.
-        </p>
+        <p className="card empty-state">{t.home.marketsEmpty}</p>
       ) : (
         <div className="market-list market-list--grid">
           {markets.map((market) => (
@@ -50,6 +50,7 @@ export function HomeMarkets() {
               key={market.documentId}
               id={market.documentId}
               title={market.title ?? market.question}
+              lang={lang}
               creator_twitter_handle={market.creator_twitter_handle}
               creator_profile_image_url={market.creator_profile_image_url}
             />

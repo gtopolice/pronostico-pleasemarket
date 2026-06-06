@@ -2,30 +2,16 @@
 
 import { useEffect } from "react";
 
+import { useTranslations } from "@/components/locale-provider";
+
 type HowItWorksModalProps = {
   open: boolean;
   onClose: () => void;
 };
 
-const STEPS = [
-  {
-    title: "1. Tag @PleaseMarketBot on X",
-    description:
-      "Tweet a yes/no question and mention @PleaseMarketBot. Our AI parses it into a binary prediction market.",
-  },
-  {
-    title: "2. Link your wallet",
-    description:
-      "Reply with a one-time link. Sign in with Privy and connect the same X account so we know you are the creator.",
-  },
-  {
-    title: "3. Market goes live",
-    description:
-      "Your market appears on please.market. You resolve within 48h after close; traders bet on anyone.market.",
-  },
-];
-
 export function HowItWorksModal({ open, onClose }: HowItWorksModalProps) {
+  const t = useTranslations();
+
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -46,9 +32,9 @@ export function HowItWorksModal({ open, onClose }: HowItWorksModalProps) {
       }}
     >
       <div className="modal" role="dialog" aria-labelledby="how-it-works-title" aria-modal="true">
-        <h2 id="how-it-works-title">How it works</h2>
+        <h2 id="how-it-works-title">{t.howItWorks.title}</h2>
         <div className="modal__steps">
-          {STEPS.map((step) => (
+          {t.howItWorks.steps.map((step) => (
             <div key={step.title} className="modal__step">
               <h3>{step.title}</h3>
               <p>{step.description}</p>
@@ -57,7 +43,7 @@ export function HowItWorksModal({ open, onClose }: HowItWorksModalProps) {
         </div>
         <div className="modal__footer">
           <button className="btn" type="button" onClick={onClose}>
-            Got it
+            {t.howItWorks.gotIt}
           </button>
         </div>
       </div>

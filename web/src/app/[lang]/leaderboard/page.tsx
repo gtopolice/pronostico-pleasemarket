@@ -5,33 +5,43 @@ import {
   type CreatorLeaderboardRow,
 } from "@/components/leaderboard-table";
 import { fetchLeaderboard } from "@/lib/api";
+import { getMessages, localePath, normalizeLocale } from "@/lib/i18n";
 
 export const revalidate = 60;
 
 export default async function LeaderboardPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ lang: string }>;
   searchParams: Promise<{ role?: string }>;
 }) {
-  const params = await searchParams;
-  const role = params.role === "ambassador" ? "ambassador" : "creator";
+  const { lang } = await params;
+  const locale = normalizeLocale(lang);
+  const t = getMessages(locale);
+  const query = await searchParams;
+  const role = query.role === "ambassador" ? "ambassador" : "creator";
   const { data } = await fetchLeaderboard(role);
 
   return (
     <div>
-      <h1 className="page-title">Leaderboard</h1>
+      <h1 className="page-title">{t.leaderboard.title}</h1>
       <p className="page-subtitle">
-        {role === "ambassador"
-          ? "Top ambassadors by attributed referral volume on Please.market preview markets."
-          : "Top creators by volume on Please.market preview markets."}
+        {role === "ambassador" ? t.leaderboard.ambassadorSubtitle : t.leaderboard.creatorSubtitle}
       </p>
       <p className="dashboard-nav" style={{ marginTop: 0 }}>
-        <a href="/leaderboard?role=creator" aria-current={role === "creator" ? "page" : undefined}>
-          Creators
+        <a
+          href={`${localePath(locale, "leaderboard")}?role=creator`}
+          aria-current={role === "creator" ? "page" : undefined}
+        >
+          {t.leaderboard.creators}
         </a>
         <span style={{ color: "var(--outline)" }}>·</span>
-        <a href="/leaderboard?role=ambassador" aria-current={role === "ambassador" ? "page" : undefined}>
-          Ambassadors
+        <a
+          href={`${localePath(locale, "leaderboard")}?role=ambassador`}
+          aria-current={role === "ambassador" ? "page" : undefined}
+        >
+          {t.leaderboard.ambassadors}
         </a>
       </p>
 

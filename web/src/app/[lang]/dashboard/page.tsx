@@ -4,10 +4,12 @@ import { usePrivy, getIdentityToken } from "@privy-io/react-auth";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { useLocale, useTranslations } from "@/components/locale-provider";
 import { CreatorStatsGrid } from "@/components/creator-stats-grid";
 import { DashboardMarketCard } from "@/components/dashboard-market-card";
 import { fetchDemoMarkets, fetchDemoProfile, fetchMeMarkets, fetchMeProfile, walletContextFromUser } from "@/lib/api";
 import { loadClaimedEarnings, saveClaimedEarnings } from "@/lib/claimed-earnings";
+import { localePath } from "@/lib/i18n";
 import { aggregateDummyStats, withUserClaims, type MarketRow } from "@/lib/market-display";
 
 const EMPTY_STATS = {
@@ -23,6 +25,8 @@ function shortenAddress(address: string) {
 }
 
 export default function DashboardPage() {
+  const locale = useLocale();
+  const t = useTranslations();
   const { ready, authenticated, login, user } = usePrivy();
   const [profile, setProfile] = useState<Record<string, unknown> | null>(null);
   const [markets, setMarkets] = useState<unknown[]>([]);
@@ -58,26 +62,23 @@ export default function DashboardPage() {
   const wallet = ctx.smartWallet ?? ctx.wallet;
   const needsWallet = authenticated && !wallet;
 
-  if (!ready) return <p className="empty-state">Loading…</p>;
+  if (!ready) return <p className="empty-state">{t.dashboard.loading}</p>;
   if (!authenticated || needsWallet) {
     return (
       <div>
-        <h1 className="page-title">Dashboard</h1>
+        <h1 className="page-title">{t.dashboard.title}</h1>
         <p className="card empty-state">
-          {needsWallet
-            ? "Wallet not connected in this session. Sign in again with the same Privy account you used on /link-x."
-            : "Sign in to view your markets and referral link."}
+          {needsWallet ? t.dashboard.walletMissing : t.dashboard.signInPrompt}
         </p>
         <button className="btn" type="button" onClick={login}>
-          Sign in with Privy
+          {t.dashboard.signIn}
         </button>
       </div>
     );
   }
 
   const marketRows = markets as MarketRow[];
-  const walletDisplay =
-    String(profile?.wallet_address ?? wallet ?? "—");
+  const walletDisplay = String(profile?.wallet_address ?? wallet ?? "—");
   const walletShort =
     walletDisplay.startsWith("0x") && walletDisplay.length > 12
       ? shortenAddress(walletDisplay)
@@ -93,7 +94,9 @@ export default function DashboardPage() {
       const nextClaimed = userClaimedTotal + stats.unclaimed_usdc;
       setUserClaimedTotal(nextClaimed);
       saveClaimedEarnings(wallet, nextClaimed);
-      setClaimMessage(`Claimed $${stats.unclaimed_usdc.toFixed(2)} to your wallet.`);
+      setClaimMessage(
+        t.dashboard.claimed.replace("{amount}", stats.unclaimed_usdc.toFixed(2)),
+      );
     } finally {
       setClaiming(false);
     }
@@ -101,8 +104,8 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="page-title">Dashboard</h1>
-      <p className="page-subtitle">Your creator profile and markets from @PleaseMarketBot.</p>
+      <h1 className="page-title">{t.dashboard.title}</h1>
+      <p className="page-subtitle">{t.dashboard.subtitle}</p>
 
       <section className="card dashboard-wallet-card" aria-label="Creator stats">
         <CreatorStatsGrid
@@ -116,45 +119,43 @@ export default function DashboardPage() {
 
         <div className="dashboard-wallet-card__meta">
           <p className="dashboard-wallet-card__line">
-            <span className="dashboard-wallet-card__label">Wallet</span>
+            <span className="dashboard-wallet-card__label">{t.dashboard.wallet}</span>
             <span className="dashboard-wallet-card__value" title={walletDisplay}>
               {walletShort}
             </span>
           </p>
           <p className="dashboard-wallet-card__line">
-            <span className="dashboard-wallet-card__label">X</span>
+            <span className="dashboard-wallet-card__label">{t.dashboard.xAccount}</span>
             <span className="dashboard-wallet-card__value">
-              {String(profile?.twitter_handle ?? "Not linked — create via @PleaseMarketBot first")}
+              {String(profile?.twitter_handle ?? t.dashboard.xNotLinked)}
             </span>
           </p>
           <p className="dashboard-wallet-card__line">
-            <span className="dashboard-wallet-card__label">Referral</span>
+            <span className="dashboard-wallet-card__label">{t.dashboard.referral}</span>
             <span className="dashboard-wallet-card__value">
               <code className="dashboard-wallet-card__code">{referralCode}</code>
             </span>
           </p>
           <p className="dashboard-wallet-card__hint">
-            Referral links attribute trades to you — you earn 10% of fees on those trades.{" "}
-            <Link href="/dashboard/share">Create a share link</Link>
+            {t.dashboard.referralHint}{" "}
+            <Link href={localePath(locale, "dashboard/share")}>{t.dashboard.shareLink}</Link>
           </p>
         </div>
       </section>
 
       <nav className="dashboard-nav" aria-label="Dashboard sections">
-        <a href="/dashboard/resolve">Resolve queue</a>
-        <a href="/dashboard/earnings">Earnings</a>
-        <a href="/dashboard/share">Share</a>
+        <a href={localePath(locale, "dashboard/resolve")}>{t.dashboard.resolveQueue}</a>
+        <a href={localePath(locale, "dashboard/earnings")}>{t.dashboard.earnings}</a>
+        <a href={localePath(locale, "dashboard/share")}>{t.dashboard.share}</a>
       </nav>
 
-      <h2 style={{ margin: "0 0 1rem", fontSize: "1.125rem" }}>My markets</h2>
+      <h2 style={{ margin: "0 0 1rem", fontSize: "1.125rem" }}>{t.dashboard.myMarkets}</h2>
       {marketRows.length === 0 ? (
-        <p className="card empty-state">
-          No markets yet. Tag @PleaseMarketBot on X to create your first preview market.
-        </p>
+        <p className="card empty-state">{t.dashboard.noMarkets}</p>
       ) : (
         <div className="dashboard-market-list">
           {marketRows.map((m) => (
-            <DashboardMarketCard key={m.documentId} {...m} />
+            <DashboardMarketCard key={m.documentId} {...m} lang={locale} />
           ))}
         </div>
       )}

@@ -1,5 +1,6 @@
 import { demoCreatorAvatarPath } from "@/lib/demo-creator-avatars";
 import { PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
+import { formatDemoAmountCompact } from "@/lib/demo-currency";
 
 export type CreatorLeaderboardRow = {
   twitter_id: string;
@@ -58,7 +59,7 @@ export function CreatorLeaderboardTable({ rows }: { rows: CreatorLeaderboardRow[
                   {creatorLabel(row)}
                 </span>
               </td>
-              <td>${Number(row.volume_usdc).toLocaleString()}</td>
+              <td>{formatDemoAmountCompact(Number(row.volume_usdc))}</td>
               <td>{Number(row.trade_count).toLocaleString()}</td>
               <td>{Number(row.market_count).toLocaleString()}</td>
             </tr>
@@ -96,9 +97,9 @@ export function AmbassadorLeaderboardTable({ rows }: { rows: AmbassadorLeaderboa
                   {creatorLabel(row)}
                 </span>
               </td>
-              <td>${Number(row.referral_volume_usdc).toLocaleString()}</td>
+              <td>{formatDemoAmountCompact(Number(row.referral_volume_usdc))}</td>
               <td>{Number(row.referral_count).toLocaleString()}</td>
-              <td>${Number(row.earned_usdc).toLocaleString()}</td>
+              <td>{formatDemoAmountCompact(Number(row.earned_usdc))}</td>
             </tr>
           ))}
         </tbody>

@@ -1,10 +1,15 @@
+"use client";
+
 import { BRAND_LINKS } from "@/lib/brand";
+import { useTranslations } from "@/components/locale-provider";
 
 export function SiteFooter() {
+  const t = useTranslations();
+
   return (
     <footer className="site-footer">
       <p className="site-footer__credit">
-        powered by{" "}
+        {t.footer.poweredBy}{" "}
         <a href={BRAND_LINKS.pronosticoLabs.github} target="_blank" rel="noopener noreferrer">
           Pronóstico Labs
         </a>
