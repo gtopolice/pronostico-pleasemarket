@@ -19,7 +19,7 @@ export function HomeMarkets() {
   useEffect(() => {
     let cancelled = false;
 
-    fetch("/api/markets?limit=9", { cache: "no-store" })
+    fetch("/api/markets?limit=12", { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : { data: [] }))
       .then((json) => {
         if (!cancelled) setMarkets(json.data ?? []);

@@ -28,7 +28,7 @@ export default function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Create Market
+              Create
             </a>
             <a className="btn btn--outline" href="/dashboard">
               Creator dashboard

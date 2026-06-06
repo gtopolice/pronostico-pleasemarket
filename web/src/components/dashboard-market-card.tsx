@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { CreatorStatsGrid } from "@/components/creator-stats-grid";
 import { RulesAccordion } from "@/components/rules-accordion";
 import { PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
 import { creatorAvatarUrl, creatorHandleLabel, type MarketCreator } from "@/lib/creator-avatar";
@@ -73,20 +74,7 @@ export function DashboardMarketCard({
         </div>
       </div>
 
-      <dl className="dashboard-market-card__stats">
-        <div>
-          <dt>Volume</dt>
-          <dd>${stats.volume_usdc.toLocaleString()}</dd>
-        </div>
-        <div>
-          <dt>Trades</dt>
-          <dd>{stats.trade_count}</dd>
-        </div>
-        <div>
-          <dt>Earned</dt>
-          <dd>${stats.earned_usdc.toFixed(2)}</dd>
-        </div>
-      </dl>
+      <CreatorStatsGrid stats={stats} />
 
       <RulesAccordion rules={rules} />
     </article>

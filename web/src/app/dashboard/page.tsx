@@ -1,11 +1,17 @@
 "use client";
 
 import { usePrivy, getIdentityToken } from "@privy-io/react-auth";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { CreatorStatsGrid } from "@/components/creator-stats-grid";
 import { DashboardMarketCard } from "@/components/dashboard-market-card";
 import { fetchDemoMarkets, fetchDemoProfile, fetchMeMarkets, fetchMeProfile, walletContextFromUser } from "@/lib/api";
 import { aggregateDummyStats, type MarketRow } from "@/lib/market-display";
+
+function shortenAddress(address: string) {
+  return `${address.slice(0, 6)}…${address.slice(-4)}`;
+}
 
 export default function DashboardPage() {
   const { ready, authenticated, login, user } = usePrivy();
@@ -30,8 +36,8 @@ export default function DashboardPage() {
   }, [authenticated, user]);
 
   const ctx = walletContextFromUser(user ?? null);
-  const wallet = ctx.wallet;
-  const needsWallet = authenticated && !wallet && !ctx.smartWallet;
+  const wallet = ctx.smartWallet ?? ctx.wallet;
+  const needsWallet = authenticated && !wallet;
 
   if (!ready) return <p className="empty-state">Loading…</p>;
   if (!authenticated || needsWallet) {
@@ -51,34 +57,47 @@ export default function DashboardPage() {
   }
 
   const marketRows = markets as MarketRow[];
+  const walletDisplay =
+    String(profile?.wallet_address ?? wallet ?? "—");
+  const walletShort =
+    walletDisplay.startsWith("0x") && walletDisplay.length > 12
+      ? shortenAddress(walletDisplay)
+      : walletDisplay;
+  const referralCode = String(profile?.referral_code ?? "—");
 
   return (
     <div>
       <h1 className="page-title">Dashboard</h1>
       <p className="page-subtitle">Your creator profile and markets from @PleaseMarketBot.</p>
 
-      <div className="card stats-grid">
-        <div>
-          <p className="stat-line">
-            <span>Wallet · </span>
-            {String(profile?.wallet_address ?? wallet ?? "—")}
+      <section className="card dashboard-wallet-card" aria-label="Creator stats">
+        <CreatorStatsGrid stats={stats} marketCount={marketRows.length} variant="hero" />
+
+        <div className="dashboard-wallet-card__meta">
+          <p className="dashboard-wallet-card__line">
+            <span className="dashboard-wallet-card__label">Wallet</span>
+            <span className="dashboard-wallet-card__value" title={walletDisplay}>
+              {walletShort}
+            </span>
           </p>
-          <p className="stat-line">
-            <span>X · </span>
-            {String(profile?.twitter_handle ?? "Not linked — create via @PleaseMarketBot first")}
+          <p className="dashboard-wallet-card__line">
+            <span className="dashboard-wallet-card__label">X</span>
+            <span className="dashboard-wallet-card__value">
+              {String(profile?.twitter_handle ?? "Not linked — create via @PleaseMarketBot first")}
+            </span>
+          </p>
+          <p className="dashboard-wallet-card__line">
+            <span className="dashboard-wallet-card__label">Referral</span>
+            <span className="dashboard-wallet-card__value">
+              <code className="dashboard-wallet-card__code">{referralCode}</code>
+            </span>
+          </p>
+          <p className="dashboard-wallet-card__hint">
+            Referral links attribute trades to you — you earn 10% of fees on those trades.{" "}
+            <Link href="/dashboard/share">Create a share link</Link>
           </p>
         </div>
-        <div>
-          <p className="stat-line">
-            <span>Referral · </span>
-            {String(profile?.referral_code ?? "—")}
-          </p>
-          <p className="stat-line">
-            <span>Volume · </span>${stats.volume_usdc.toLocaleString()} · Trades: {stats.trade_count} · Earned: $
-            {stats.earned_usdc.toFixed(2)}
-          </p>
-        </div>
-      </div>
+      </section>
 
       <nav className="dashboard-nav" aria-label="Dashboard sections">
         <a href="/dashboard/resolve">Resolve queue</a>
