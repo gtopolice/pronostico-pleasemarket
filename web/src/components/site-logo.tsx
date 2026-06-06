@@ -1,40 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const LOGO_SRC = "/assets/please-market-logo.png";
+import { PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
 
-type SiteLogoProps = {
-  size?: "nav" | "hero";
-  /** When set, render a heading instead of a link (home page hero). */
-  asHeading?: boolean;
-};
-
-export function SiteLogo({ size = "nav", asHeading = false }: SiteLogoProps) {
-  const iconSize = size === "hero" ? 48 : 28;
-  const className = `site-logo site-logo--${size}${asHeading ? " site-logo--heading" : ""}`;
-
-  const content = (
-    <>
+export function SiteLogo() {
+  return (
+    <Link href="/" className="site-logo">
       <Image
-        src={LOGO_SRC}
+        src={PLEASE_MARKET_LOGO_SRC}
         alt=""
-        width={iconSize}
-        height={iconSize}
+        width={28}
+        height={28}
         className="site-logo__icon"
-        priority={size === "nav"}
+        priority
         aria-hidden
       />
       <span className="site-logo__text">please.market</span>
-    </>
-  );
-
-  if (asHeading) {
-    return <h1 className={className}>{content}</h1>;
-  }
-
-  return (
-    <Link href="/" className={className}>
-      {content}
     </Link>
   );
 }

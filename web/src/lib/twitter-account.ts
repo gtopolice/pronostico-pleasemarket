@@ -2,11 +2,13 @@ type LinkedAccount = {
   type?: string;
   subject?: string;
   username?: string | null;
+  profile_picture_url?: string | null;
 };
 
 export type TwitterOAuthAccount = {
   subject: string;
   username: string | null;
+  profilePictureUrl: string | null;
 };
 
 export function twitterOAuthAccount(
@@ -17,6 +19,7 @@ export function twitterOAuthAccount(
   return {
     subject: account.subject,
     username: account.username ?? null,
+    profilePictureUrl: account.profile_picture_url ?? null,
   };
 }
 

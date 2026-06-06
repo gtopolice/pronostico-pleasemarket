@@ -1,14 +1,24 @@
-import { SiteLogo } from "@/components/site-logo";
+import Image from "next/image";
+
+import { PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
 
 export default function HomePage() {
   return (
     <div className="hero">
-      <div>
-        <SiteLogo size="hero" asHeading />
-        <p className="page-subtitle">
-          Tag <strong>@PleaseMarketBot</strong> on X with a yes/no question. AI turns it into a
-          binary market on Please.market — powered by{" "}
-          <a href="https://anyone.market">Anyone</a>. You resolve; traders bet.
+      <div className="hero__intro">
+        <Image
+          src={PLEASE_MARKET_LOGO_SRC}
+          alt=""
+          width={56}
+          height={56}
+          className="hero__icon"
+          priority
+          aria-hidden
+        />
+        <h1 className="page-title">Create prediction markets from X</h1>
+        <p className="page-subtitle hero__subtitle">
+          Tag <strong>@PleaseMarketBot</strong> with a yes/no question. AI turns it into a binary
+          market — powered by <a href="https://anyone.market">Anyone</a>. You resolve; traders bet.
         </p>
         <div className="hero__actions">
           <a

@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   title: "please.market — prediction markets on X",
   description: "Create prediction markets by tagging @PleaseMarketBot on X",
   icons: {
-    icon: "/assets/please-market-logo.png",
-    apple: "/assets/please-market-logo.png",
+    icon: "/assets/please_logo.png",
+    apple: "/assets/please_logo.png",
   },
 };
 

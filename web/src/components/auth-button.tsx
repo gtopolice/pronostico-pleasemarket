@@ -16,6 +16,40 @@ function walletAvatarLabel(address: string) {
   return address.slice(2, 4).toUpperCase();
 }
 
+function UserAvatar({
+  profilePictureUrl,
+  fallbackLabel,
+  size = "md",
+}: {
+  profilePictureUrl?: string | null;
+  fallbackLabel?: string;
+  size?: "md" | "lg";
+}) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const className = `wallet-menu__avatar${size === "lg" ? " wallet-menu__avatar--lg" : ""}`;
+  const showImage = Boolean(profilePictureUrl) && !imageFailed;
+
+  if (showImage && profilePictureUrl) {
+    return (
+      <span className={className}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={profilePictureUrl}
+          alt=""
+          className="wallet-menu__avatar-image"
+          onError={() => setImageFailed(true)}
+        />
+      </span>
+    );
+  }
+
+  return (
+    <span className={className} aria-hidden>
+      {fallbackLabel ?? "•"}
+    </span>
+  );
+}
+
 const BASE_SEPOLIA_EXPLORER = "https://sepolia.basescan.org/address";
 
 export function AuthButton() {
@@ -107,9 +141,10 @@ export function AuthButton() {
         aria-controls={menuId}
         onClick={() => setOpen((value) => !value)}
       >
-        <span className="wallet-menu__avatar" aria-hidden>
-          {address ? walletAvatarLabel(address) : "•"}
-        </span>
+        <UserAvatar
+          profilePictureUrl={twitter?.profilePictureUrl}
+          fallbackLabel={address ? walletAvatarLabel(address) : "•"}
+        />
         <span className="wallet-menu__label">{address ? shortenAddress(address) : "Account"}</span>
         <ChevronIcon open={open} />
       </button>
@@ -117,9 +152,11 @@ export function AuthButton() {
       {open ? (
         <div className="wallet-menu__dropdown" id={menuId} role="menu">
           <div className="wallet-menu__header">
-            <span className="wallet-menu__avatar wallet-menu__avatar--lg" aria-hidden>
-              {address ? walletAvatarLabel(address) : "•"}
-            </span>
+            <UserAvatar
+              profilePictureUrl={twitter?.profilePictureUrl}
+              fallbackLabel={address ? walletAvatarLabel(address) : "•"}
+              size="lg"
+            />
             <div className="wallet-menu__identity">
               <strong>{twitter?.username ? `@${twitter.username}` : "Connected wallet"}</strong>
               <span>{address ?? "No wallet loaded"}</span>

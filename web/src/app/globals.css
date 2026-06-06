@@ -6,6 +6,7 @@
 
 html {
   color-scheme: dark;
+  background: #000000;
 }
 
 body {
@@ -102,23 +103,9 @@ a:hover {
 .site-logo__icon {
   display: block;
   flex-shrink: 0;
-  object-fit: contain;
-}
-
-.site-logo--nav .site-logo__icon {
   width: 28px;
   height: 28px;
-}
-
-.site-logo--hero .site-logo__icon {
-  width: 48px;
-  height: 48px;
-}
-
-.site-logo--heading {
-  margin: 0 0 0.5rem;
-  font-size: clamp(1.75rem, 4vw, 2.25rem);
-  line-height: 1.15;
+  object-fit: contain;
 }
 
 .site-logo:hover {
@@ -267,6 +254,14 @@ main,
   font-weight: 800;
   letter-spacing: 0.04em;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.wallet-menu__avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .wallet-menu__avatar--lg {
@@ -391,10 +386,29 @@ main,
   margin-bottom: 2rem;
 }
 
+.hero__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 42rem;
+}
+
+.hero__icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  margin-bottom: 0.25rem;
+}
+
+.hero__subtitle {
+  margin-bottom: 0;
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+  margin-top: 1.25rem;
 }
 
 .steps-grid {
