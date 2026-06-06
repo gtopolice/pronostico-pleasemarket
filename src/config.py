@@ -60,7 +60,7 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("PLEASE_DEFAULT_CREATOR_FEE_BPS", "CHIWIWIS_DEFAULT_CREATOR_FEE_BPS"),
     )
     please_default_image_url: str = Field(
-        default="https://anyone.market/og-image.png",
+        default="https://please.market/assets/please_logo.png",
         validation_alias=AliasChoices("PLEASE_DEFAULT_IMAGE_URL", "CHIWIWIS_DEFAULT_IMAGE_URL"),
     )
 

@@ -240,6 +240,7 @@ async def _create_market_for_mention(
                 "creator_twitter_id": ctx.author_id,
                 "creator_twitter_handle": ctx.author_handle,
                 "creator_profile_image_url": ctx.author_profile_image_url,
+                "image_url": settings.please_default_image_url,
             },
         )
         market_url = f"{settings.please_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"

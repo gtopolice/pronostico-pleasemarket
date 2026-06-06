@@ -14,7 +14,7 @@ def compose_deploy_reply(
 ) -> str:
     return "\n".join(
         [
-            "Your market live on please.market!",
+            "Your market is live on please.market!",
             intent.question,
             market_url,
         ]
@@ -22,7 +22,7 @@ def compose_deploy_reply(
 
 
 def compose_link_wallet_reply(link_url: str) -> str:
-    return f"Click the link below to link your wallet and create markets on please.market — powered by @Anyone_Market ▲\n{link_url}"
+    return f"Click the link below to link your wallet and create a market — powered by @Anyone_Market\n{link_url}"
 
 
 def compose_reject_reply(reason: str) -> str:
