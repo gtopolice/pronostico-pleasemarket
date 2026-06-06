@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     x_api_secret: str = ""
     x_access_token: str = ""
     x_access_token_secret: str = ""
+    x_bot_user_id: str = ""
+    mentions_poll_enabled: bool = True
+    mentions_poll_interval_seconds: int = 30
 
     openai_api_key: str = ""
     please_llm_model: str = Field(

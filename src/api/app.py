@@ -27,6 +27,7 @@ from src.db.wallet_link import (
 from src.markets.backend import BackendClient
 from src.resolution.reminders import run_reminder_loop
 from src.x.client import XClient
+from src.x.mentions_poller import run_mentions_loop
 from src.x.webhook import handle_mention_payload
 
 logger = logging.getLogger(__name__)
@@ -71,6 +72,7 @@ async def startup() -> None:
 
     asyncio.create_task(run_claims_loop(_backend, _x))
     asyncio.create_task(run_reminder_loop(_x))
+    asyncio.create_task(run_mentions_loop(_backend, _x))
 
 
 @app.get("/health")
@@ -81,6 +83,8 @@ async def health() -> dict:
         "deploy_enabled": settings.agent_deploy_enabled,
         "web_base": settings.please_web_url,
         "anyone_web_base": settings.anyone_web_base,
+        "x_post_enabled": _x.can_post(),
+        "mentions_poll_enabled": settings.mentions_poll_enabled and bool(settings.x_api_bearer_token),
     }
 
 
