@@ -92,10 +92,17 @@ export async function fetchRecentMarkets(limit = 24) {
   try {
     const res = await fetch(`${workerBase}/api/markets?limit=${limit}`, { next: { revalidate: 30 } });
     if (!res.ok) {
-      return { data: [] as Array<{ documentId?: string; title?: string; question?: string; state?: string }> };
+      return { data: [] as Array<{ documentId?: string; title?: string; question?: string; state?: string; creator_twitter_handle?: string | null; creator_profile_image_url?: string | null }> };
     }
     return res.json() as Promise<{
-      data: Array<{ documentId?: string; title?: string; question?: string; state?: string }>;
+      data: Array<{
+        documentId?: string;
+        title?: string;
+        question?: string;
+        state?: string;
+        creator_twitter_handle?: string | null;
+        creator_profile_image_url?: string | null;
+      }>;
     }>;
   } catch {
     return { data: [] };

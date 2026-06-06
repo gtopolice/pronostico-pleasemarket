@@ -48,7 +48,13 @@ export default function DashboardPage() {
     );
   }
 
-  const marketRows = markets as Array<{ title?: string; documentId?: string; state?: string }>;
+  const marketRows = markets as Array<{
+    title?: string;
+    documentId?: string;
+    state?: string;
+    creator_twitter_handle?: string;
+    creator_profile_image_url?: string;
+  }>;
 
   return (
     <div>
@@ -96,6 +102,8 @@ export default function DashboardPage() {
               id={m.documentId}
               title={m.title}
               state={m.state}
+              creator_twitter_handle={m.creator_twitter_handle}
+              creator_profile_image_url={m.creator_profile_image_url}
             />
           ))}
         </div>

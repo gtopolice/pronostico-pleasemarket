@@ -7,7 +7,7 @@ import { fetchRecentMarkets } from "@/lib/api";
 export const revalidate = 30;
 
 export default async function HomePage() {
-  const { data: markets } = await fetchRecentMarkets(24);
+  const { data: markets } = await fetchRecentMarkets(9);
 
   return (
     <div className="hero">
@@ -79,13 +79,15 @@ export default async function HomePage() {
             No markets yet. Tag @PleaseMarketBot on X to create the first one.
           </p>
         ) : (
-          <div className="market-list">
+          <div className="market-list market-list--grid">
             {markets.map((market) => (
               <MarketListCard
                 key={market.documentId}
                 id={market.documentId}
                 title={market.title ?? market.question}
                 state={market.state}
+                creator_twitter_handle={market.creator_twitter_handle}
+                creator_profile_image_url={market.creator_profile_image_url}
               />
             ))}
           </div>

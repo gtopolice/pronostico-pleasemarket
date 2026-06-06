@@ -12,5 +12,6 @@ export const BRAND_LINKS = {
   },
   pronosticoLabs: {
     github: "https://github.com/Pronostico-Labs",
+    x: "https://x.com/PronosticoLabs",
   },
 } as const;

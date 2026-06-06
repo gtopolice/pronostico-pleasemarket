@@ -35,6 +35,9 @@ export function SiteFooter() {
         </div>
         <div className="site-footer__group">
           <span className="site-footer__label">Pronóstico Labs</span>
+          <a href={BRAND_LINKS.pronosticoLabs.x} target="_blank" rel="noopener noreferrer">
+            X
+          </a>
           <a href={BRAND_LINKS.pronosticoLabs.github} target="_blank" rel="noopener noreferrer">
             GitHub
           </a>
