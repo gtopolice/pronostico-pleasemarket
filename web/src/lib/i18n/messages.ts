@@ -76,6 +76,12 @@ export type Messages = {
     insufficientBalanceLive: string;
     tradeLiveHint: string;
     liveMarketFootnote: string;
+    faucetTitle: string;
+    faucetDescription: string;
+    claimMusdc: string;
+    claimingMusdc: string;
+    claimMusdcSuccess: string;
+    claimMusdcInsufficient: string;
   };
   dashboard: {
     title: string;
@@ -210,6 +216,12 @@ const en: Messages = {
     insufficientBalanceLive: "Insufficient USDC balance",
     tradeLiveHint: "On-chain trading on Base Sepolia via Privy smart wallet",
     liveMarketFootnote: "Live market on Base Sepolia — same contracts as anyone.market.",
+    faucetTitle: "Test USDC faucet",
+    faucetDescription: "Claim 100 mUSDC to your Privy smart wallet (once every 24h on Base Sepolia).",
+    claimMusdc: "Claim 100 mUSDC",
+    claimingMusdc: "Claiming…",
+    claimMusdcSuccess: "mUSDC claimed — you can trade now.",
+    claimMusdcInsufficient: "Need test USDC to trade?",
   },
   dashboard: {
     title: "Dashboard",
@@ -345,6 +357,12 @@ const es: Messages = {
     insufficientBalanceLive: "Saldo USDC insuficiente",
     tradeLiveHint: "Trading on-chain en Base Sepolia vía billetera inteligente Privy",
     liveMarketFootnote: "Mercado en vivo en Base Sepolia — mismos contratos que anyone.market.",
+    faucetTitle: "Faucet USDC de prueba",
+    faucetDescription: "Reclama 100 mUSDC en tu smart wallet Privy (una vez cada 24 h en Base Sepolia).",
+    claimMusdc: "Reclamar 100 mUSDC",
+    claimingMusdc: "Reclamando…",
+    claimMusdcSuccess: "mUSDC reclamado — ya puedes operar.",
+    claimMusdcInsufficient: "¿Necesitas USDC de prueba para operar?",
   },
   dashboard: {
     title: "Panel",

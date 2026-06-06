@@ -6,6 +6,10 @@ import { useEffect, useId, useRef, useState } from "react";
 import { baseSepolia } from "viem/chains";
 
 import { walletContextFromUser } from "@/lib/api";
+import { isTestnetFaucetEnabled } from "@/lib/base-sepolia-rpc";
+import { useClaimMusdc } from "@/hooks/use-claim-musdc";
+import { useTranslations } from "@/components/locale-provider";
+import { txExplorerUrl } from "@/lib/tx-explorer";
 import {
   twitterAvatarFallbackUrl,
   twitterAvatarUrl,
@@ -76,6 +80,7 @@ const BASE_SEPOLIA_EXPLORER = "https://sepolia.basescan.org/address";
 
 export function AuthButton() {
   const menuId = useId();
+  const t = useTranslations();
   const { ready, authenticated, login, logout, user } = usePrivy();
   const { linkTwitter } = useLinkAccount();
   const { fundWallet } = useFundWallet();
@@ -85,6 +90,15 @@ export function AuthButton() {
 
   const ctx = walletContextFromUser(user ?? null);
   const address = ctx.smartWallet ?? ctx.wallet ?? null;
+  const showFaucet = isTestnetFaucetEnabled() && Boolean(address);
+  const {
+    claim: claimMusdc,
+    isClaiming,
+    isSuccess: claimSuccess,
+    error: claimError,
+    txHash: claimTxHash,
+    reset: resetClaim,
+  } = useClaimMusdc(address);
   const twitter = twitterOAuthAccount(user?.linkedAccounts);
   const handleLabel = twitterHandleLabel(twitter);
   const avatarUrl = twitterAvatarUrl(twitter);
@@ -118,6 +132,12 @@ export function AuthButton() {
     return () => window.clearTimeout(timer);
   }, [copied]);
 
+  useEffect(() => {
+    if (!open) {
+      resetClaim();
+    }
+  }, [open, resetClaim]);
+
   const closeMenu = () => setOpen(false);
 
   const handleCopyAddress = async () => {
@@ -133,6 +153,11 @@ export function AuthButton() {
       address,
       options: { chain: baseSepolia },
     });
+  };
+
+  const handleClaimMusdc = async () => {
+    if (!address) return;
+    await claimMusdc();
   };
 
   const handleLogout = async () => {
@@ -218,6 +243,31 @@ export function AuthButton() {
                   <FundIcon />
                   Fund wallet
                 </button>
+                {showFaucet ? (
+                  <button
+                    className="wallet-menu__item"
+                    type="button"
+                    role="menuitem"
+                    disabled={isClaiming}
+                    onClick={() => void handleClaimMusdc()}
+                  >
+                    <ClaimIcon />
+                    {isClaiming ? t.market.claimingMusdc : t.market.claimMusdc}
+                  </button>
+                ) : null}
+                {claimSuccess ? (
+                  <p className="wallet-menu__notice wallet-menu__notice--success">{t.market.claimMusdcSuccess}</p>
+                ) : null}
+                {claimError ? (
+                  <p className="wallet-menu__notice wallet-menu__notice--error">{claimError}</p>
+                ) : null}
+                {claimTxHash ? (
+                  <p className="wallet-menu__notice">
+                    <a href={txExplorerUrl(claimTxHash)} target="_blank" rel="noreferrer">
+                      {t.market.viewTx}
+                    </a>
+                  </p>
+                ) : null}
                 <a
                   className="wallet-menu__item"
                   href={`${BASE_SEPOLIA_EXPLORER}/${address}`}
@@ -311,6 +361,19 @@ function FundIcon() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M12 3v18M17 8H9.5a3.5 3.5 0 1 0 0 7H14a3.5 3.5 0 0 1 0 7H7"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function ClaimIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"

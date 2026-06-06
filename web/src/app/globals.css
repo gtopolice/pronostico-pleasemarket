@@ -481,6 +481,36 @@ main,
   background: rgba(255, 180, 171, 0.08);
 }
 
+.wallet-menu__item:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.wallet-menu__notice {
+  margin: 0.25rem 0.75rem 0;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  background: var(--surface-container-high);
+  color: var(--text-secondary);
+}
+
+.wallet-menu__notice a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.wallet-menu__notice--success {
+  color: #15803d;
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.wallet-menu__notice--error {
+  color: #b91c1c;
+  background: rgba(248, 113, 113, 0.12);
+}
+
 .hero {
   display: grid;
   gap: 1.5rem;
@@ -1186,6 +1216,65 @@ main,
 .market-checkout-shell__success a {
   color: inherit;
   text-decoration: underline;
+}
+
+.claim-musdc {
+  margin-bottom: 1rem;
+  padding: 0.875rem 1rem;
+}
+
+.claim-musdc--compact {
+  padding: 0.75rem 1rem;
+}
+
+.claim-musdc__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.claim-musdc__eyebrow {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.claim-musdc__description,
+.claim-musdc__hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.claim-musdc--compact .claim-musdc__hint {
+  margin: 0;
+  flex: 1;
+}
+
+.claim-musdc .btn {
+  margin-top: 0.75rem;
+}
+
+.claim-musdc__tx {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
+.claim-musdc__success {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: #4ade80;
+}
+
+.claim-musdc__error {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: #f87171;
 }
 
 .market-card__creator {

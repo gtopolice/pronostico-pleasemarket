@@ -7,10 +7,12 @@ import { useMarketTrading } from "../../vendor/pronostico-apps/packages/predicti
 import { Market, MarketType, State } from "@pronostico-apps/interfaces";
 
 import { formatTradeSubmitError } from "@/lib/format-trade-error";
+import { isTestnetFaucetEnabled } from "@/lib/base-sepolia-rpc";
 import { getMessages, type Locale } from "@/lib/i18n";
 import type { MarketOption } from "@/lib/market-option";
 import { txExplorerUrl } from "@/lib/tx-explorer";
 import { usePrivySigner } from "@/hooks/use-privy-signer";
+import { ClaimMusdcButton } from "@/components/claim-musdc-button";
 
 type MarketCheckoutShellProps = {
   market: MarketOption;
@@ -85,8 +87,50 @@ function synthesizeMarket(option: MarketOption): Market {
 
 export function MarketCheckoutShell({ market, locale = "es" }: MarketCheckoutShellProps) {
   const t = getMessages(locale);
+  const [tradeKey, setTradeKey] = useState(0);
+  const faucetLabels = {
+    title: t.market.faucetTitle,
+    description: t.market.faucetDescription,
+    claim: t.market.claimMusdc,
+    claiming: t.market.claimingMusdc,
+    insufficient: t.market.claimMusdcInsufficient,
+    success: t.market.claimMusdcSuccess,
+  };
+
+  return (
+    <LiveMarketCheckout
+      key={tradeKey}
+      market={market}
+      locale={locale}
+      t={t}
+      faucetLabels={faucetLabels}
+      onFunded={() => setTradeKey((value) => value + 1)}
+    />
+  );
+}
+
+function LiveMarketCheckout({
+  market,
+  locale,
+  t,
+  faucetLabels,
+  onFunded,
+}: {
+  market: MarketOption;
+  locale: Locale;
+  t: ReturnType<typeof getMessages>;
+  faucetLabels: {
+    title: string;
+    description: string;
+    claim: string;
+    claiming: string;
+    insufficient: string;
+    success: string;
+  };
+  onFunded: () => void;
+}) {
   const { authenticated, login, ready } = usePrivy();
-  const { signer, provider, isLoading: signerLoading } = usePrivySigner();
+  const { signer, provider, address, isLoading: signerLoading } = usePrivySigner();
 
   const [selectedTab, setSelectedTab] = useState(1);
   const [buyYes, setBuyYes] = useState(true);
@@ -248,8 +292,21 @@ export function MarketCheckoutShell({ market, locale = "es" }: MarketCheckoutShe
     roiPot: t.market.potentialWin,
   };
 
+  const usdcBalance = Number(balances.usdc);
+  const showFaucet = authenticated && isTestnetFaucetEnabled();
+  const showCompactFaucet = showFaucet && usdcBalance < 1;
+
   return (
     <div className="market-checkout-shell">
+      {showCompactFaucet ? (
+        <ClaimMusdcButton
+          walletAddress={address}
+          compact
+          labels={faucetLabels}
+          onClaimSuccess={onFunded}
+        />
+      ) : null}
+
       <CheckoutCard
         market={synthMarket}
         signer={signer || undefined}
@@ -288,6 +345,10 @@ export function MarketCheckoutShell({ market, locale = "es" }: MarketCheckoutShe
             {t.market.viewTx}
           </a>
         </p>
+      ) : null}
+
+      {showFaucet && !showCompactFaucet ? (
+        <ClaimMusdcButton walletAddress={address} labels={faucetLabels} onClaimSuccess={onFunded} />
       ) : null}
     </div>
   );
