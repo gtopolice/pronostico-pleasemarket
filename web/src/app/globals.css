@@ -89,8 +89,8 @@ a:hover {
 
 .site-logo {
   display: inline-flex;
-  align-items: baseline;
-  gap: 0.15rem;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -99,13 +99,31 @@ a:hover {
   white-space: nowrap;
 }
 
+.site-logo__icon {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.site-logo--nav .site-logo__icon {
+  width: 28px;
+  height: 28px;
+}
+
+.site-logo--hero .site-logo__icon {
+  width: 48px;
+  height: 48px;
+}
+
+.site-logo--heading {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  line-height: 1.15;
+}
+
 .site-logo:hover {
   text-decoration: none;
   opacity: 0.92;
-}
-
-.site-logo__mark {
-  color: var(--secondary-container);
 }
 
 main,

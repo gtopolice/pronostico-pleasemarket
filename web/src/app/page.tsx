@@ -1,10 +1,10 @@
+import { SiteLogo } from "@/components/site-logo";
+
 export default function HomePage() {
   return (
     <div className="hero">
       <div>
-        <h1 className="page-title">
-          Please.market <span className="site-logo__mark">▲</span>
-        </h1>
+        <SiteLogo size="hero" asHeading />
         <p className="page-subtitle">
           Tag <strong>@PleaseMarketBot</strong> on X with a yes/no question. AI turns it into a
           binary market on Please.market — powered by{" "}

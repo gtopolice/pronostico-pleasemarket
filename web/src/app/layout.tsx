@@ -13,8 +13,12 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Please.market — prediction markets on X",
+  title: "please.market — prediction markets on X",
   description: "Create prediction markets by tagging @PleaseMarketBot on X",
+  icons: {
+    icon: "/assets/please-market-logo.png",
+    apple: "/assets/please-market-logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
