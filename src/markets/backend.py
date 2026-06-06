@@ -109,3 +109,26 @@ class BackendClient:
             r = await client.get(f"{self.base}/agent/please-market/leaderboard", params=params)
             r.raise_for_status()
             return (r.json().get("data") or [])
+
+    async def fetch_published_markets(self, *, locale: str = "es", limit: int = 50) -> list[dict[str, Any]]:
+        """PUBLISHED Strapi markets with chain fields (requires API_TOKEN)."""
+        if not self.api_token:
+            return []
+        params: dict[str, Any] = {
+            "pagination[page]": 1,
+            "pagination[pageSize]": min(max(limit, 1), 100),
+            "sort[0]": "updatedAt:desc",
+            "locale": locale,
+            "filters[state][$eq]": "PUBLISHED",
+            "populate[image]": "true",
+            "populate[category][populate][image]": "true",
+        }
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            r = await client.get(f"{self.base}/markets", headers=self._strapi_headers(), params=params)
+            if r.status_code in (401, 403):
+                logger.warning("Strapi markets list skipped: HTTP %s", r.status_code)
+                return []
+            r.raise_for_status()
+            data = r.json()
+            rows = data.get("data") or []
+            return rows if isinstance(rows, list) else []

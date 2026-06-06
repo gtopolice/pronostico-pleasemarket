@@ -227,18 +227,36 @@ def _parse_created_at(row: dict[str, Any]) -> datetime:
     return datetime.min.replace(tzinfo=timezone.utc)
 
 
-def merge_market_list(db_rows: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
-    """Merge seed + live preview markets, newest first."""
+def _parse_sort_at(row: dict[str, Any]) -> datetime:
+    for key in ("sort_at", "created_at", "updatedAt", "publishedAt", "createdAt"):
+        raw = row.get(key)
+        if isinstance(raw, datetime):
+            return raw if raw.tzinfo else raw.replace(tzinfo=timezone.utc)
+        if isinstance(raw, str) and raw.strip():
+            try:
+                parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+                return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+            except ValueError:
+                continue
+    return datetime.min.replace(tzinfo=timezone.utc)
+
+
+def merge_market_list(
+    db_rows: list[dict[str, Any]],
+    limit: int,
+    live_rows: list[dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
+    """Merge live Strapi + seed + preview markets, newest first."""
     capped = max(1, min(limit, 100))
     seen: set[str] = set()
     merged: list[dict[str, Any]] = []
 
-    for row in [*SEED_DEMO_MARKETS, *db_rows]:
+    for row in [*(live_rows or []), *SEED_DEMO_MARKETS, *db_rows]:
         doc_id = row.get("documentId")
         if not doc_id or doc_id in seen:
             continue
         seen.add(doc_id)
         merged.append(row)
 
-    merged.sort(key=_parse_created_at, reverse=True)
+    merged.sort(key=_parse_sort_at, reverse=True)
     return merged[:capped]

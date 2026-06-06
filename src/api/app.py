@@ -29,6 +29,7 @@ from src.db.wallet_link import (
     peek_link_token,
 )
 from src.markets.backend import BackendClient
+from src.markets.strapi_normalize import normalize_strapi_market
 from src.resolution.reminders import run_reminder_loop
 from src.x.client import XClient
 from src.x.mentions_poller import run_mentions_loop
@@ -113,10 +114,20 @@ async def leaderboard(period: int | None = None, role: str = "creator") -> dict:
 
 
 @app.get("/api/markets")
-async def list_markets(limit: int = 24) -> dict[str, Any]:
-    """Recent preview markets created via @PleaseMarketBot (dry-run store)."""
+async def list_markets(limit: int = 24, locale: str = "es") -> dict[str, Any]:
+    """Live Anyone markets (Strapi) + preview markets from @PleaseMarketBot."""
     db_limit = min(limit + seed_market_count(), 100)
-    rows = merge_market_list(list_demo_markets_recent(db_limit), limit)
+    live_rows: list[dict[str, Any]] = []
+    try:
+        raw = await _backend.fetch_published_markets(locale=locale, limit=limit)
+        for row in raw:
+            normalized = normalize_strapi_market(row)
+            if normalized:
+                live_rows.append(normalized)
+    except Exception as exc:
+        logger.warning("Strapi markets list failed: %s", exc)
+
+    rows = merge_market_list(list_demo_markets_recent(db_limit), limit, live_rows=live_rows)
     return {"data": rows}
 
 
@@ -154,6 +165,8 @@ async def get_market(document_id: str) -> dict[str, Any]:
             data = data[0] if data else None
         if not data:
             raise HTTPException(status_code=404, detail="market not found")
+        if isinstance(data, dict):
+            data = {**data, "dry_run": False, "is_live": True}
         return {"data": data, "source": "strapi"}
 
 
