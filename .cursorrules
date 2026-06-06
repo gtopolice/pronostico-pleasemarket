@@ -1,0 +1,25 @@
+# Please.market — X agent (hackathon)
+
+## Context
+- **This repo** (`pronostico-pleasemarket`): Please.market X AI agent for market creation from tweets.
+- **Parent startup:** Anyone ([anyone.market](https://anyone.market)) — do not use "Pronóstico" in consumer copy.
+- **Read first:** `docs/HANDOFF.md` for live URLs, demo script, and what's shipped vs pending.
+
+## Scope
+- Hackathon work stays in **this repo** unless explicitly asked to touch `pronostico` (bot/TMA) or `pronostico-backend` (Strapi).
+- Agent is **custom Python + FastAPI** — not OpenClaw/LangChain.
+
+## Live deploy (Railway project `chiwiwis`)
+- Web: https://chiwiwis-web-production.up.railway.app
+- Worker: https://chiwiwis-worker-production.up.railway.app
+- Mode: `PLEASE_DRY_RUN=1` — demo markets in Postgres, not on-chain.
+
+## Conventions
+- Brand: **Please.market** · X handle: **@PleaseMarketBot**
+- Env prefix: `PLEASE_*` (legacy `CHIWIWIS_*` aliases still supported in config)
+- HTML/Telegram-style escaping where applicable; Next.js uses standard React escaping.
+
+## Deploy
+- Worker: root `Dockerfile` + `railway.toml`
+- Web: `web/Dockerfile`, Railway root directory = `web`
+- See `docs/RAILWAY.md`

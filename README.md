@@ -2,6 +2,14 @@
 
 Standalone Railway service: Python agent worker + FastAPI BFF + Next.js dashboard.
 
+**Hackathon / handoff:** see [`docs/HANDOFF.md`](docs/HANDOFF.md) — live URLs, demo script, Cursor prompt for new sessions.
+
+## Live demo
+
+- Web: https://chiwiwis-web-production.up.railway.app
+- Worker: https://chiwiwis-worker-production.up.railway.app/health
+- Example market: https://chiwiwis-web-production.up.railway.app/en/market/f9c22ea8-8124-4038-86ae-fee2c2a8f295
+
 ## Quick start
 
 ```bash
