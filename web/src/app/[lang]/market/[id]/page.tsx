@@ -6,11 +6,14 @@ import { RulesAccordion } from "@/components/rules-accordion";
 import { BRAND_LINKS } from "@/lib/brand";
 import { creatorAvatarUrl } from "@/lib/creator-avatar";
 import { getMessages, normalizeLocale } from "@/lib/i18n";
+import { isDemoMarket, isLiveMarket } from "@/lib/market-kind";
+import { marketOptionFromRecord } from "@/lib/market-option";
 import { upsizeTwitterProfileImageUrl } from "@/lib/twitter-profile-image";
 
 const apiBase = process.env.NEXT_PUBLIC_PLEASE_API_BASE ?? "http://localhost:8080";
 
 type MarketRecord = {
+  id?: number;
   documentId?: string;
   question?: string;
   title?: string;
@@ -20,6 +23,16 @@ type MarketRecord = {
   state?: string;
   dry_run?: boolean;
   hackathon_fallback?: boolean;
+  demo_seed?: boolean;
+  is_live?: boolean;
+  source?: string;
+  volume?: string | number | null;
+  cpmm_address?: string | null;
+  cpmm_market_id?: string | number | null;
+  contract_version?: string | null;
+  pool_address?: string | null;
+  current_probability_yes?: number | null;
+  current_probability_no?: number | null;
   image_url?: string | null;
   image?: { url?: string | null } | null;
   creator_profile_image_url?: string | null;
@@ -49,14 +62,31 @@ async function fetchMarket(id: string): Promise<{ data: MarketRecord; source: st
 }
 
 function marketKindLabel(m: MarketRecord, t: ReturnType<typeof getMessages>) {
+  if (isLiveMarket(m)) return t.market.badgeLive;
   if (m.dry_run) return t.market.badgePreview;
   if (m.hackathon_fallback) return t.market.badgeHackathon;
-  return t.market.badgeLive;
+  return t.market.badgePreview;
 }
 
 function marketKindClass(m: MarketRecord) {
+  if (isLiveMarket(m)) return "badge badge--live";
   if (m.dry_run || m.hackathon_fallback) return "badge badge--preview";
-  return "badge badge--live";
+  return "badge badge--preview";
+}
+
+function formatVolume(raw: MarketRecord["volume"]): string | null {
+  if (raw === null || raw === undefined) return null;
+  const n = Number(typeof raw === "string" ? raw.replace(/,/g, "") : raw);
+  if (!Number.isFinite(n) || n < 0) return null;
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(n);
+  } catch {
+    return `$${n.toFixed(0)}`;
+  }
 }
 
 export async function generateMetadata({
@@ -93,10 +123,10 @@ export default async function MarketPage({
   const close = m.close_time_utc
     ? new Date(m.close_time_utc).toLocaleString(locale === "es" ? "es-MX" : "en-US")
     : "—";
-  const anyoneBase = process.env.NEXT_PUBLIC_ANYONE_WEB_BASE ?? "https://anyone.market";
   const rules = m.resolution_rules ?? m.description ?? t.market.rulesFallback;
   const title = m.title ?? m.question ?? t.market.untitled;
-  const isPreview = Boolean(m.dry_run || m.hackathon_fallback);
+  const isPreview = isDemoMarket(m);
+  const liveMarket = marketOptionFromRecord(m);
   const imageUrl = marketImageUrl(m);
   const composeTweet =
     locale === "es"
@@ -108,7 +138,7 @@ export default async function MarketPage({
       <div className="market-hero">
         <div className="badge-row">
           <span className={marketKindClass(m)}>{marketKindLabel(m, t)}</span>
-          {m.state && !m.dry_run ? <span className="badge">{m.state}</span> : null}
+          {m.state ? <span className="badge">{m.state}</span> : null}
           <span className="badge badge--closed">
             {t.market.source}: {row.source}
           </span>
@@ -129,7 +159,7 @@ export default async function MarketPage({
             <strong>{t.market.closes}:</strong> {close}
           </span>
           <span>
-            <strong>{t.market.creatorResolves}</strong>
+            <strong>{isPreview ? t.market.creatorResolves : t.market.tradeLiveHint}</strong>
           </span>
         </div>
       </div>
@@ -139,32 +169,36 @@ export default async function MarketPage({
         title={title}
         closeTimeUtc={m.close_time_utc}
         isPreview={isPreview}
+        liveMarket={liveMarket}
+        volumeDisplay={formatVolume(m.volume)}
         locale={locale}
       />
 
       <RulesAccordion rules={rules} />
 
       <div className="hero__actions" style={{ marginTop: "1.5rem" }}>
-        {!isPreview ? (
-          <a className="btn" href={`${anyoneBase}/${locale}/market/${id}`}>
-            {t.market.tradeOnAnyone}
-          </a>
-        ) : (
+        {isPreview ? (
           <span className="btn btn--outline" style={{ cursor: "default" }}>
             {t.market.hackathonPreview}
           </span>
-        )}
+        ) : null}
         <a className="btn btn--tertiary" href={composeTweet} target="_blank" rel="noopener noreferrer">
           {t.market.createAnother}
         </a>
       </div>
 
       <p className="empty-state" style={{ marginTop: "1.25rem" }}>
-        {t.market.createdVia}{" "}
-        <a href={BRAND_LINKS.pleaseMarket.x} target="_blank" rel="noopener noreferrer">
-          @PleaseMarketBot
-        </a>{" "}
-        {t.market.onX}
+        {isPreview ? (
+          <>
+            {t.market.createdVia}{" "}
+            <a href={BRAND_LINKS.pleaseMarket.x} target="_blank" rel="noopener noreferrer">
+              @PleaseMarketBot
+            </a>{" "}
+            {t.market.onX}
+          </>
+        ) : (
+          t.market.liveMarketFootnote
+        )}
       </p>
     </article>
   );

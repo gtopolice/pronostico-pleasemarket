@@ -64,7 +64,13 @@ NEXT_PUBLIC_PLEASE_WEB_URL=https://<pleasemarket-web>.up.railway.app
 NEXT_PUBLIC_ANYONE_WEB_BASE=https://anyone.market
 NEXT_PUBLIC_PRIVY_APP_ID=
 NEXT_PUBLIC_PRIVY_CLIENT_ID=
-API_URL=
+API_URL=https://prod.api.pronostico.market/api
+```
+
+Runtime env (server-only, for live Anyone markets in grid + trading):
+
+```
+API_TOKEN=<Strapi bearer token — same as Anyone bot>
 ```
 
 After web URL is known, update worker `PLEASE_WEB_URL` and `ANYONE_WEB_BASE` to match.

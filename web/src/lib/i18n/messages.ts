@@ -32,6 +32,8 @@ export type Messages = {
     marketsLoading: string;
     marketsEmpty: string;
     composeTweet: string;
+    cardBadgeLive: string;
+    cardBadgeDemo: string;
   };
   howItWorks: {
     title: string;
@@ -67,6 +69,13 @@ export type Messages = {
     buyYes: string;
     buyNo: string;
     insufficientBalance: string;
+    tradeLive: string;
+    signInToTrade: string;
+    tradeSuccess: string;
+    viewTx: string;
+    insufficientBalanceLive: string;
+    tradeLiveHint: string;
+    liveMarketFootnote: string;
   };
   dashboard: {
     title: string;
@@ -136,11 +145,13 @@ const en: Messages = {
     step2Body: "Use the reply link to connect Privy and verify your X account as creator.",
     step3Title: "Market goes live",
     step3Body: "Share the market page. Resolve within 48h after close; traders bet on anyone.market.",
-    marketsTitle: "Markets from @PleaseMarketBot",
-    marketsSubtitle: "Recent preview markets created on X.",
+    marketsTitle: "Markets",
+    marketsSubtitle: "Live Anyone markets on Base Sepolia plus preview markets from X.",
     marketsLoading: "Loading markets…",
     marketsEmpty: "No markets yet. Tag @PleaseMarketBot on X to create the first one.",
     composeTweet: "https://x.com/compose/tweet?text=@PleaseMarketBot%20",
+    cardBadgeLive: "Live",
+    cardBadgeDemo: "Demo",
   },
   howItWorks: {
     title: "How it works",
@@ -192,6 +203,13 @@ const en: Messages = {
     buyYes: "Buy Yes",
     buyNo: "Buy No",
     insufficientBalance: "Insufficient MXNB balance",
+    tradeLive: "Trade on Base Sepolia",
+    signInToTrade: "Sign in with Privy to trade on-chain.",
+    tradeSuccess: "Trade submitted.",
+    viewTx: "View transaction",
+    insufficientBalanceLive: "Insufficient USDC balance",
+    tradeLiveHint: "On-chain trading on Base Sepolia via Privy smart wallet",
+    liveMarketFootnote: "Live market on Base Sepolia — same contracts as anyone.market.",
   },
   dashboard: {
     title: "Dashboard",
@@ -261,12 +279,14 @@ const es: Messages = {
     step2Body: "Usa el enlace de respuesta para conectar Privy y verificar tu cuenta de X como creador.",
     step3Title: "El mercado queda en vivo",
     step3Body: "Comparte la página del mercado. Resuelve en 48 h después del cierre; los traders apuestan en anyone.market.",
-    marketsTitle: "Mercados de @PleaseMarketBot",
-    marketsSubtitle: "Mercados preview recientes creados en X.",
+    marketsTitle: "Mercados",
+    marketsSubtitle: "Mercados en vivo de Anyone en Base Sepolia y previews desde X.",
     marketsLoading: "Cargando mercados…",
     marketsEmpty: "Aún no hay mercados. Menciona a @PleaseMarketBot en X para crear el primero.",
     composeTweet:
       "https://x.com/compose/tweet?text=@PleaseMarketBot%20%C2%BFSe%20agotar%C3%A1%20ETH%20Mexico%20antes%20del%20domingo%3F%20",
+    cardBadgeLive: "En vivo",
+    cardBadgeDemo: "Demo",
   },
   howItWorks: {
     title: "Cómo funciona",
@@ -318,6 +338,13 @@ const es: Messages = {
     buyYes: "Comprar Sí",
     buyNo: "Comprar No",
     insufficientBalance: "Saldo MXNB insuficiente",
+    tradeLive: "Operar en Base Sepolia",
+    signInToTrade: "Inicia sesión con Privy para operar on-chain.",
+    tradeSuccess: "Operación enviada.",
+    viewTx: "Ver transacción",
+    insufficientBalanceLive: "Saldo USDC insuficiente",
+    tradeLiveHint: "Trading on-chain en Base Sepolia vía billetera inteligente Privy",
+    liveMarketFootnote: "Mercado en vivo en Base Sepolia — mismos contratos que anyone.market.",
   },
   dashboard: {
     title: "Panel",

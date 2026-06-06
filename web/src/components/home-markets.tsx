@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { MarketListCard } from "@/components/market-list-card";
 import { getMessages, type Locale } from "@/lib/i18n";
+import { isDemoMarket, isLiveMarket } from "@/lib/market-kind";
 
 type HomeMarket = {
   documentId?: string;
@@ -12,6 +13,11 @@ type HomeMarket = {
   state?: string;
   creator_twitter_handle?: string | null;
   creator_profile_image_url?: string | null;
+  dry_run?: boolean;
+  is_live?: boolean;
+  source?: string;
+  cpmm_address?: string | null;
+  cpmm_market_id?: string | number | null;
 };
 
 export function HomeMarkets({ lang = "es" }: { lang?: Locale }) {
@@ -21,7 +27,7 @@ export function HomeMarkets({ lang = "es" }: { lang?: Locale }) {
   useEffect(() => {
     let cancelled = false;
 
-    fetch("/api/markets?limit=12", { cache: "no-store" })
+    fetch(`/api/markets?limit=12&locale=${lang}`, { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : { data: [] }))
       .then((json) => {
         if (!cancelled) setMarkets(json.data ?? []);
@@ -53,6 +59,8 @@ export function HomeMarkets({ lang = "es" }: { lang?: Locale }) {
               lang={lang}
               creator_twitter_handle={market.creator_twitter_handle}
               creator_profile_image_url={market.creator_profile_image_url}
+              isLive={isLiveMarket(market)}
+              isDemo={isDemoMarket(market)}
             />
           ))}
         </div>
