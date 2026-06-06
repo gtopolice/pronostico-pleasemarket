@@ -8,3 +8,4 @@ web/.next/
 web/node_modules/
 *.tsbuildinfo
 .DS_Store
+web/public/assets/please_logo_black.png
