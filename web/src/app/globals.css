@@ -386,6 +386,19 @@ main,
   margin-bottom: 2rem;
 }
 
+.hero__top {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .hero__top {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 3rem;
+  }
+}
+
 .hero__intro {
   display: flex;
   flex-direction: column;
@@ -393,11 +406,17 @@ main,
   max-width: 42rem;
 }
 
-.hero__icon {
-  width: 56px;
-  height: 56px;
+.hero__visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.hero__logo {
+  width: 168px;
+  height: 168px;
   object-fit: contain;
-  margin-bottom: 0.25rem;
 }
 
 .hero__subtitle {
@@ -420,6 +439,22 @@ main,
   .steps-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+.home-markets {
+  margin-top: 0.5rem;
+}
+
+.home-markets__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+  color: var(--predictions-card-title);
+}
+
+.home-markets__subtitle {
+  margin: 0 0 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
 }
 
 .step-card {
@@ -761,4 +796,66 @@ th {
 .empty-state {
   color: var(--text-secondary);
   font-size: 0.9375rem;
+}
+
+.site-footer {
+  margin-top: auto;
+  padding: 2rem 1.25rem 2.5rem;
+  border-top: 1px solid var(--outline-variant);
+  max-width: 1200px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.site-footer__credit {
+  margin: 0 0 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.site-footer__credit a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.site-footer__credit a:hover {
+  color: var(--secondary-container);
+}
+
+.site-footer__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
+}
+
+.site-footer__group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.site-footer__label {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.site-footer__group a {
+  color: var(--link-color);
+  font-size: 0.8125rem;
+  text-decoration: none;
+}
+
+.site-footer__group a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 640px) {
+  .site-footer {
+    padding: 2rem 1.5rem 3rem;
+  }
 }

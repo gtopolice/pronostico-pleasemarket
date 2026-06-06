@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 
 import { AppPrivyProvider } from "@/components/privy-provider";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="site-shell">
             <SiteHeader />
             <main>{children}</main>
+            <SiteFooter />
           </div>
         </AppPrivyProvider>
       </body>

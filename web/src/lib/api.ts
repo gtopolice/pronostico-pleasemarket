@@ -88,6 +88,20 @@ export async function fetchLeaderboard(period?: number) {
   return res.json();
 }
 
+export async function fetchRecentMarkets(limit = 24) {
+  try {
+    const res = await fetch(`${workerBase}/api/markets?limit=${limit}`, { next: { revalidate: 30 } });
+    if (!res.ok) {
+      return { data: [] as Array<{ documentId?: string; title?: string; question?: string; state?: string }> };
+    }
+    return res.json() as Promise<{
+      data: Array<{ documentId?: string; title?: string; question?: string; state?: string }>;
+    }>;
+  } catch {
+    return { data: [] };
+  }
+}
+
 export function shareUrl(marketDoc: string, ref: string, lang = "en") {
   return `${pleaseWeb}/${lang}/market/${marketDoc}?ref=${ref}&src=please_market_share`;
 }

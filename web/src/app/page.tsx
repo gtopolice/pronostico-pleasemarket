@@ -1,37 +1,55 @@
 import Image from "next/image";
 
-import { PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
+import { MarketListCard } from "@/components/market-list-card";
+import { BRAND_LINKS, PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
+import { fetchRecentMarkets } from "@/lib/api";
 
-export default function HomePage() {
+export const revalidate = 30;
+
+export default async function HomePage() {
+  const { data: markets } = await fetchRecentMarkets(24);
+
   return (
     <div className="hero">
-      <div className="hero__intro">
-        <Image
-          src={PLEASE_MARKET_LOGO_SRC}
-          alt=""
-          width={56}
-          height={56}
-          className="hero__icon"
-          priority
-          aria-hidden
-        />
-        <h1 className="page-title">Create prediction markets from X</h1>
-        <p className="page-subtitle hero__subtitle">
+      <div className="hero__top">
+        <div className="hero__intro">
+          <h1 className="page-title">Create prediction markets from X</h1>
+          <p className="page-subtitle hero__subtitle">
           Tag <strong>@PleaseMarketBot</strong> with a yes/no question. AI turns it into a binary
-          market — powered by <a href="https://anyone.market">Anyone</a>. You resolve; traders bet.
-        </p>
-        <div className="hero__actions">
-          <a
-            className="btn"
-            href="https://x.com/compose/tweet?text=@PleaseMarketBot%20"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Open X
+          market — powered by{" "}
+          <a href={BRAND_LINKS.pronosticoLabs.github} target="_blank" rel="noopener noreferrer">
+            Pronóstico Labs
           </a>
-          <a className="btn btn--outline" href="/dashboard">
-            Creator dashboard
+          {" / "}
+          <a href={BRAND_LINKS.anyone.web} target="_blank" rel="noopener noreferrer">
+            anyone.market
           </a>
+          . You resolve; traders bet.
+          </p>
+          <div className="hero__actions">
+            <a
+              className="btn"
+              href="https://x.com/compose/tweet?text=@PleaseMarketBot%20"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Create Market
+            </a>
+            <a className="btn btn--outline" href="/dashboard">
+              Creator dashboard
+            </a>
+          </div>
+        </div>
+
+        <div className="hero__visual" aria-hidden>
+          <Image
+            src={PLEASE_MARKET_LOGO_SRC}
+            alt=""
+            width={168}
+            height={168}
+            className="hero__logo"
+            priority
+          />
         </div>
       </div>
 
@@ -49,9 +67,30 @@ export default function HomePage() {
         <div className="step-card">
           <div className="step-card__num">3</div>
           <h3>Market goes live</h3>
-          <p>Share the market page. Resolve within 48h after close; traders bet on Anyone.</p>
+          <p>Share the market page. Resolve within 48h after close; traders bet on anyone.market.</p>
         </div>
       </div>
+
+      <section className="home-markets">
+        <h2 className="home-markets__title">Markets from @PleaseMarketBot</h2>
+        <p className="home-markets__subtitle">Recent preview markets created on X.</p>
+        {markets.length === 0 ? (
+          <p className="card empty-state">
+            No markets yet. Tag @PleaseMarketBot on X to create the first one.
+          </p>
+        ) : (
+          <div className="market-list">
+            {markets.map((market) => (
+              <MarketListCard
+                key={market.documentId}
+                id={market.documentId}
+                title={market.title ?? market.question}
+                state={market.state}
+              />
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

@@ -21,7 +21,7 @@ const STEPS = [
   {
     title: "3. Market goes live",
     description:
-      "Your market appears on Please.market. You resolve within 48h after close; traders bet on Anyone.",
+      "Your market appears on please.market. You resolve within 48h after close; traders bet on anyone.market.",
   },
 ];
 
