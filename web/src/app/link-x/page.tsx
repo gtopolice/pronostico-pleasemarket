@@ -1,7 +1,7 @@
 "use client";
 
 import { getIdentityToken, useLinkAccount, usePrivy } from "@privy-io/react-auth";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { completeLinkX, fetchLinkToken } from "@/lib/api";
@@ -12,7 +12,21 @@ type LinkTokenInfo = {
   twitter_handle?: string | null;
 };
 
+function redirectToMarket(url: string, router: ReturnType<typeof useRouter>) {
+  try {
+    const parsed = new URL(url);
+    if (parsed.origin === window.location.origin) {
+      router.replace(`${parsed.pathname}${parsed.search}`);
+      return;
+    }
+  } catch {
+    // fall through to full navigation
+  }
+  window.location.replace(url);
+}
+
 function LinkXContent() {
+  const router = useRouter();
   const params = useSearchParams();
   const token = params.get("token") ?? "";
   const { ready, authenticated, login, user } = usePrivy();
@@ -69,7 +83,8 @@ function LinkXContent() {
       setLinked(true);
       if (result.market?.market_url) {
         setMarketUrl(result.market.market_url);
-        setStatus("Wallet linked! Your market is live.");
+        setStatus("Taking you to your market…");
+        redirectToMarket(result.market.market_url, router);
       } else {
         setStatus("Wallet linked! You can create markets via @PleaseMarketBot on X.");
       }
@@ -80,7 +95,7 @@ function LinkXContent() {
     } finally {
       setLinking(false);
     }
-  }, [token, wallet, smartWallet?.address, twitterVerified, linking, linked]);
+  }, [token, wallet, smartWallet?.address, twitterVerified, linking, linked, router]);
 
   useEffect(() => {
     if (!ready || !authenticated || !wallet || !twitterVerified || linked || linking) return;
@@ -122,16 +137,16 @@ function LinkXContent() {
       {linked ? (
         <>
           {status && <p style={{ marginTop: "1rem" }}>{status}</p>}
-          {marketUrl && (
+          {marketUrl ? (
+            <p style={{ marginTop: "0.75rem", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
+              Not redirected?{" "}
+              <a href={marketUrl}>View your market</a>
+            </p>
+          ) : (
             <p style={{ marginTop: "0.75rem" }}>
-              <a className="btn" href={marketUrl}>
-                View your market
-              </a>
+              <a href="/dashboard">Creator dashboard →</a>
             </p>
           )}
-          <p style={{ marginTop: "0.75rem" }}>
-            <a href="/dashboard">Creator dashboard →</a>
-          </p>
         </>
       ) : !authenticated ? (
         <>
