@@ -3,14 +3,15 @@
 import { usePrivy, getIdentityToken } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 
-import { MarketListCard } from "@/components/market-list-card";
+import { DashboardMarketCard } from "@/components/dashboard-market-card";
 import { fetchDemoMarkets, fetchDemoProfile, fetchMeMarkets, fetchMeProfile, walletContextFromUser } from "@/lib/api";
+import { aggregateDummyStats, type MarketRow } from "@/lib/market-display";
 
 export default function DashboardPage() {
   const { ready, authenticated, login, user } = usePrivy();
   const [profile, setProfile] = useState<Record<string, unknown> | null>(null);
   const [markets, setMarkets] = useState<unknown[]>([]);
-  const [stats, setStats] = useState<Record<string, number>>({});
+  const [stats, setStats] = useState({ volume_usdc: 0, trade_count: 0, earned_usdc: 0 });
 
   useEffect(() => {
     if (!authenticated || !user) return;
@@ -21,9 +22,10 @@ export default function DashboardPage() {
       const token = await getIdentityToken();
       const p = token ? await fetchMeProfile(token, ctx) : await fetchDemoProfile(ctx);
       const m = token ? await fetchMeMarkets(token, ctx) : await fetchDemoMarkets(ctx);
+      const rows = (m.data ?? []) as MarketRow[];
       setProfile(p);
-      setMarkets(m.data ?? []);
-      setStats(m.stats ?? {});
+      setMarkets(rows);
+      setStats(aggregateDummyStats(rows));
     })();
   }, [authenticated, user]);
 
@@ -48,13 +50,7 @@ export default function DashboardPage() {
     );
   }
 
-  const marketRows = markets as Array<{
-    title?: string;
-    documentId?: string;
-    state?: string;
-    creator_twitter_handle?: string;
-    creator_profile_image_url?: string;
-  }>;
+  const marketRows = markets as MarketRow[];
 
   return (
     <div>
@@ -78,7 +74,8 @@ export default function DashboardPage() {
             {String(profile?.referral_code ?? "—")}
           </p>
           <p className="stat-line">
-            <span>Volume · </span>${stats.volume_usdc ?? 0} · Trades: {stats.trade_count ?? 0}
+            <span>Volume · </span>${stats.volume_usdc.toLocaleString()} · Trades: {stats.trade_count} · Earned: $
+            {stats.earned_usdc.toFixed(2)}
           </p>
         </div>
       </div>
@@ -95,15 +92,9 @@ export default function DashboardPage() {
           No markets yet. Tag @PleaseMarketBot on X to create your first preview market.
         </p>
       ) : (
-        <div className="market-list">
+        <div className="dashboard-market-list">
           {marketRows.map((m) => (
-            <MarketListCard
-              key={m.documentId}
-              id={m.documentId}
-              title={m.title}
-              creator_twitter_handle={m.creator_twitter_handle}
-              creator_profile_image_url={m.creator_profile_image_url}
-            />
+            <DashboardMarketCard key={m.documentId} {...m} />
           ))}
         </div>
       )}
