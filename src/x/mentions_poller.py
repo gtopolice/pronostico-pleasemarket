@@ -68,7 +68,7 @@ async def _poll_mentions(backend: BackendClient, x: XClient, bot_user_id: str) -
         "max_results": 10,
         "tweet.fields": "author_id,created_at",
         "expansions": "author_id",
-        "user.fields": "username",
+        "user.fields": "username,profile_image_url",
     }
     if _since_id:
         params["since_id"] = _since_id
@@ -93,7 +93,10 @@ async def _poll_mentions(backend: BackendClient, x: XClient, bot_user_id: str) -
         return
 
     users = {
-        str(user["id"]): user.get("username")
+        str(user["id"]): {
+            "username": user.get("username"),
+            "profile_image_url": user.get("profile_image_url"),
+        }
         for user in (data.get("includes") or {}).get("users") or []
     }
 
@@ -107,11 +110,13 @@ async def _poll_mentions(backend: BackendClient, x: XClient, bot_user_id: str) -
             _since_id = tweet_id
             continue
 
+        author = users.get(author_id) or {}
         await handle_mention_payload(
             {
                 "tweet_id": tweet_id,
                 "author_id": author_id,
-                "author_handle": users.get(author_id),
+                "author_handle": author.get("username"),
+                "author_profile_image_url": author.get("profile_image_url"),
                 "text": tweet.get("text") or "",
             },
             backend,

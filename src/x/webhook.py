@@ -70,6 +70,7 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
         tweet_id=tweet_id,
         author_id=author_id,
         author_handle=tweet.get("author_handle"),
+        author_profile_image_url=tweet.get("author_profile_image_url"),
         text=tweet.get("text", ""),
         parent_text=tweet.get("parent_text"),
         quoted_text=tweet.get("quoted_text"),
@@ -145,6 +146,9 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
                 "state": "PREVIEW",
                 "dry_run": True,
                 "creator_wallet": creator,
+                "creator_twitter_id": author_id,
+                "creator_twitter_handle": ctx.author_handle,
+                "creator_profile_image_url": ctx.author_profile_image_url,
             },
         )
         preview_url = f"{settings.please_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"
@@ -192,6 +196,7 @@ def _extract_tweet(payload: dict) -> dict | None:
             "id": str(payload["tweet_id"]),
             "author_id": str(payload.get("author_id", "")),
             "author_handle": payload.get("author_handle"),
+            "author_profile_image_url": payload.get("author_profile_image_url"),
             "text": payload.get("text") or "",
             "parent_text": payload.get("parent_text"),
         }

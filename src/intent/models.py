@@ -23,6 +23,7 @@ class TweetContext(BaseModel):
     tweet_id: str
     author_id: str
     author_handle: str | None = None
+    author_profile_image_url: str | None = None
     text: str
     parent_text: str | None = None
     quoted_text: str | None = None
