@@ -6,7 +6,12 @@ import { useEffect, useId, useRef, useState } from "react";
 import { baseSepolia } from "viem/chains";
 
 import { walletContextFromUser } from "@/lib/api";
-import { twitterOAuthAccount } from "@/lib/twitter-account";
+import {
+  twitterAvatarFallbackUrl,
+  twitterAvatarUrl,
+  twitterHandleLabel,
+  twitterOAuthAccount,
+} from "@/lib/twitter-account";
 
 function shortenAddress(address: string) {
   return `${address.slice(0, 6)}…${address.slice(-4)}`;
@@ -18,26 +23,43 @@ function walletAvatarLabel(address: string) {
 
 function UserAvatar({
   profilePictureUrl,
+  fallbackProfilePictureUrl,
   fallbackLabel,
   size = "md",
 }: {
   profilePictureUrl?: string | null;
+  fallbackProfilePictureUrl?: string | null;
   fallbackLabel?: string;
   size?: "md" | "lg";
 }) {
+  const [activeUrl, setActiveUrl] = useState<string | null>(
+    profilePictureUrl ?? fallbackProfilePictureUrl ?? null,
+  );
   const [imageFailed, setImageFailed] = useState(false);
   const className = `wallet-menu__avatar${size === "lg" ? " wallet-menu__avatar--lg" : ""}`;
-  const showImage = Boolean(profilePictureUrl) && !imageFailed;
 
-  if (showImage && profilePictureUrl) {
+  useEffect(() => {
+    setActiveUrl(profilePictureUrl ?? fallbackProfilePictureUrl ?? null);
+    setImageFailed(false);
+  }, [profilePictureUrl, fallbackProfilePictureUrl]);
+
+  const showImage = Boolean(activeUrl) && !imageFailed;
+
+  if (showImage && activeUrl) {
     return (
       <span className={className}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={profilePictureUrl}
+          src={activeUrl}
           alt=""
           className="wallet-menu__avatar-image"
-          onError={() => setImageFailed(true)}
+          onError={() => {
+            if (activeUrl === profilePictureUrl && fallbackProfilePictureUrl) {
+              setActiveUrl(fallbackProfilePictureUrl);
+              return;
+            }
+            setImageFailed(true);
+          }}
         />
       </span>
     );
@@ -64,6 +86,10 @@ export function AuthButton() {
   const ctx = walletContextFromUser(user ?? null);
   const address = ctx.smartWallet ?? ctx.wallet ?? null;
   const twitter = twitterOAuthAccount(user?.linkedAccounts);
+  const handleLabel = twitterHandleLabel(twitter);
+  const avatarUrl = twitterAvatarUrl(twitter);
+  const avatarFallbackUrl = twitterAvatarFallbackUrl(twitter);
+  const triggerLabel = handleLabel ?? (address ? shortenAddress(address) : "Account");
 
   useEffect(() => {
     if (!open) return;
@@ -142,10 +168,13 @@ export function AuthButton() {
         onClick={() => setOpen((value) => !value)}
       >
         <UserAvatar
-          profilePictureUrl={twitter?.profilePictureUrl}
+          profilePictureUrl={avatarUrl}
+          fallbackProfilePictureUrl={
+            avatarUrl !== avatarFallbackUrl ? avatarFallbackUrl : null
+          }
           fallbackLabel={address ? walletAvatarLabel(address) : "•"}
         />
-        <span className="wallet-menu__label">{address ? shortenAddress(address) : "Account"}</span>
+        <span className="wallet-menu__label">{triggerLabel}</span>
         <ChevronIcon open={open} />
       </button>
 
@@ -153,13 +182,15 @@ export function AuthButton() {
         <div className="wallet-menu__dropdown" id={menuId} role="menu">
           <div className="wallet-menu__header">
             <UserAvatar
-              profilePictureUrl={twitter?.profilePictureUrl}
+              profilePictureUrl={avatarUrl}
+              fallbackProfilePictureUrl={
+                avatarUrl !== avatarFallbackUrl ? avatarFallbackUrl : null
+              }
               fallbackLabel={address ? walletAvatarLabel(address) : "•"}
               size="lg"
             />
             <div className="wallet-menu__identity">
-              <strong>{twitter?.username ? `@${twitter.username}` : "Connected wallet"}</strong>
-              <span>{address ?? "No wallet loaded"}</span>
+              <strong>{handleLabel ?? "Connected wallet"}</strong>
             </div>
           </div>
 
@@ -170,13 +201,26 @@ export function AuthButton() {
             </Link>
             {address ? (
               <>
+                <div className="wallet-menu__address-row" role="none">
+                  <span className="wallet-menu__address-label">Wallet</span>
+                  <div className="wallet-menu__address-value">
+                    <span className="wallet-menu__address" title={address}>
+                      {shortenAddress(address)}
+                    </span>
+                    <button
+                      className="wallet-menu__copy-btn"
+                      type="button"
+                      aria-label={copied ? "Address copied" : "Copy wallet address"}
+                      onClick={handleCopyAddress}
+                    >
+                      <CopyIcon />
+                    </button>
+                  </div>
+                  {copied ? <span className="wallet-menu__copied">Copied</span> : null}
+                </div>
                 <button className="wallet-menu__item" type="button" role="menuitem" onClick={handleFundWallet}>
                   <FundIcon />
                   Fund wallet
-                </button>
-                <button className="wallet-menu__item" type="button" role="menuitem" onClick={handleCopyAddress}>
-                  <CopyIcon />
-                  {copied ? "Copied" : "Copy address"}
                 </button>
                 <a
                   className="wallet-menu__item"
