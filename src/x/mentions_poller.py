@@ -9,6 +9,7 @@ from typing import Any
 from src.config import settings
 from src.markets.backend import BackendClient
 from src.x.client import XClient
+from src.x.profile_image import upsize_twitter_profile_image_url
 from src.x.webhook import handle_mention_payload
 
 logger = logging.getLogger(__name__)
@@ -95,7 +96,7 @@ async def _poll_mentions(backend: BackendClient, x: XClient, bot_user_id: str) -
     users = {
         str(user["id"]): {
             "username": user.get("username"),
-            "profile_image_url": user.get("profile_image_url"),
+            "profile_image_url": upsize_twitter_profile_image_url(user.get("profile_image_url")),
         }
         for user in (data.get("includes") or {}).get("users") or []
     }
@@ -116,7 +117,9 @@ async def _poll_mentions(backend: BackendClient, x: XClient, bot_user_id: str) -
                 "tweet_id": tweet_id,
                 "author_id": author_id,
                 "author_handle": author.get("username"),
-                "author_profile_image_url": author.get("profile_image_url"),
+                "author_profile_image_url": upsize_twitter_profile_image_url(
+                    author.get("profile_image_url")
+                ),
                 "text": tweet.get("text") or "",
             },
             backend,

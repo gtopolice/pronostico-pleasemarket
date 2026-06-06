@@ -1,3 +1,5 @@
+import { upsizeTwitterProfileImageUrl } from "@/lib/twitter-profile-image";
+
 type LinkedAccount = {
   type?: string;
   subject?: string;
@@ -35,7 +37,7 @@ export function twitterHandleLabel(account: TwitterOAuthAccount | null): string 
 }
 
 export function twitterAvatarUrl(account: TwitterOAuthAccount | null): string | null {
-  const stored = account?.profilePictureUrl?.trim();
+  const stored = upsizeTwitterProfileImageUrl(account?.profilePictureUrl);
   if (stored) return stored;
 
   const handle = normalizeHandle(account?.username);

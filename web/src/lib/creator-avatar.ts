@@ -1,5 +1,6 @@
 import { PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
 import { demoCreatorAvatarPath } from "@/lib/demo-creator-avatars";
+import { upsizeTwitterProfileImageUrl } from "@/lib/twitter-profile-image";
 
 export type MarketCreator = {
   creator_profile_image_url?: string | null;
@@ -12,7 +13,7 @@ function normalizeHandle(handle?: string | null): string | null {
 }
 
 export function creatorAvatarUrl(creator: MarketCreator): string {
-  const stored = creator.creator_profile_image_url?.trim();
+  const stored = upsizeTwitterProfileImageUrl(creator.creator_profile_image_url);
   if (stored) return stored;
 
   const demoAvatar = demoCreatorAvatarPath(creator.creator_twitter_handle);

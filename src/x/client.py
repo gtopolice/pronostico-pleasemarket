@@ -11,6 +11,7 @@ import requests
 from requests_oauthlib import OAuth1
 
 from src.config import settings
+from src.x.profile_image import upsize_twitter_profile_image_url
 
 logger = logging.getLogger(__name__)
 
@@ -114,6 +115,8 @@ class XClient:
             "id": str(tweet["id"]),
             "author_id": author_id,
             "author_handle": author.get("username"),
-            "author_profile_image_url": author.get("profile_image_url"),
+            "author_profile_image_url": upsize_twitter_profile_image_url(
+                author.get("profile_image_url")
+            ),
             "text": tweet.get("text") or "",
         }
