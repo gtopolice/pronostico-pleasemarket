@@ -407,11 +407,17 @@ main,
 }
 
 .hero__visual {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: 168px;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hero__visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 168px;
+  }
 }
 
 .hero__logo {
