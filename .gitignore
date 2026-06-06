@@ -6,4 +6,5 @@ __pycache__/
 node_modules/
 web/.next/
 web/node_modules/
+*.tsbuildinfo
 .DS_Store
