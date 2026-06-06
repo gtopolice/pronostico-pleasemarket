@@ -6,6 +6,6 @@ Please.market reuses org Anyone fee model:
 - Ambassador 10% via `?ref=` + `POST /referral-clicks`
 - Share URL: `anyone.market/{lang}/market/{doc}?ref={code}&src=please_market_share`
 
-Dashboard `/dashboard/share` generates links. `@PleaseMarket share {docId}` for power users.
+Dashboard `/dashboard/share` generates links. `@PleaseMarketBot share {docId}` for power users.
 
 Self-referral blocked by org backend on buy path.

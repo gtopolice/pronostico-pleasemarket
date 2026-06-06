@@ -55,7 +55,7 @@ export default function DashboardPage() {
       <h1>Dashboard</h1>
       <div className="card">
         <p>Wallet: {String(profile?.wallet_address ?? wallet ?? "—")}</p>
-        <p>X: {String(profile?.twitter_handle ?? "Not linked — create via @PleaseMarket first")}</p>
+        <p>X: {String(profile?.twitter_handle ?? "Not linked — create via @PleaseMarketBot first")}</p>
         <p>Referral code: {String(profile?.referral_code ?? "—")}</p>
         <p>Volume: ${stats.volume_usdc ?? 0} · Trades: {stats.trade_count ?? 0}</p>
       </div>

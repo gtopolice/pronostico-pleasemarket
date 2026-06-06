@@ -74,7 +74,7 @@ def moderate_intent(ctx: TweetContext, intent: MarketIntent) -> tuple[bool, str 
         return False, "Too many links — try a simpler market prompt."
 
     if intent.confidence < 0.35:
-        return False, "I couldn't understand that market. Try: @PleaseMarket Will X happen by [date]?"
+        return False, "I couldn't understand that market. Try: @PleaseMarketBot Will X happen by [date]?"
 
     now = datetime.now(timezone.utc)
     if intent.close_time <= now:

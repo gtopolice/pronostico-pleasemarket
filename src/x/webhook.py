@@ -77,7 +77,13 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
     )
 
     text_lower = ctx.text.lower()
-    handles = {settings.please_x_handle.lower(), "chiwiwis", "pleasemarket", "please.market"}
+    handles = {
+        settings.please_x_handle.lower(),
+        "chiwiwis",
+        "pleasemarket",
+        "pleasemarketbot",
+        "please.market",
+    }
 
     if _SHARE_RE.search(ctx.text) or _AMP_RE.search(ctx.text):
         await _handle_share_command(ctx, backend, x)

@@ -10,8 +10,12 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     please_x_handle: str = Field(
-        default="PleaseMarket",
-        validation_alias=AliasChoices("PLEASE_X_HANDLE", "CHIWIWIS_X_HANDLE"),
+        default="PleaseMarketBot",
+        validation_alias=AliasChoices(
+            "PLEASE_X_HANDLE",
+            "PLEASE_MARKET_X_HANDLE",
+            "CHIWIWIS_X_HANDLE",
+        ),
     )
     please_web_url: str = Field(
         default="https://please.market",

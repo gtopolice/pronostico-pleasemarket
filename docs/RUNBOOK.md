@@ -26,5 +26,5 @@ Overdue resolve → verify `resolve_obligations.status = platform_escalation` �
 1. Testnet E2E: tag → deploy → trade → resolve → claim
 2. Remove allowlist (`PLEASE_DEPLOY_ALLOWLIST` empty)
 3. Set `PLEASE_DRY_RUN=0`, `AGENT_DEPLOY_ENABLED=1`
-4. Switch @PleaseMarket to production X app credentials
+4. Switch @PleaseMarketBot to production X app credentials
 5. CEO sign-off on permissionless deploy policy

@@ -20,7 +20,7 @@ X mention → Please.market worker → pronostico-backend (Strapi) → anyone.ma
 
 ## Deploy flow
 
-1. User tags @PleaseMarket with market prompt
+1. User tags @PleaseMarketBot with market prompt
 2. Worker checks wallet link (`GET /agent/please-market/wallet/:id`)
 3. LLM parses intent → moderation → `POST /agent/please-market/markets/deploy`
 4. Agent treasury completes on-chain steps (org signing endpoints)

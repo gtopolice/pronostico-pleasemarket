@@ -71,7 +71,7 @@ After web URL is known, update worker `PLEASE_WEB_URL` and `ANYONE_WEB_BASE` to 
 curl https://<worker>/health
 curl https://<worker>/api/leaderboard
 curl -X POST https://<worker>/api/x/webhook -H 'Content-Type: application/json' \
-  -d '{"tweet_id":"t1","author_id":"u1","author_handle":"demo","text":"@PleaseMarket Will it rain in CDMX tomorrow by 6pm?"}'
+  -d '{"tweet_id":"t1","author_id":"u1","author_handle":"demo","text":"@PleaseMarketBot Will it rain in CDMX tomorrow by 6pm?"}'
 curl https://<web>/en/market/<documentId-from-reply>
 ```
 

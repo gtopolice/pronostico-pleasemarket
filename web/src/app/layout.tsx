@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Please.market — prediction markets on X",
-  description: "Create prediction markets by tagging @PleaseMarket on X",
+  description: "Create prediction markets by tagging @PleaseMarketBot on X",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

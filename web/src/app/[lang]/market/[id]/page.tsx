@@ -86,7 +86,7 @@ export default async function MarketPage({
       </p>
 
       <p style={{ marginTop: "1rem", opacity: 0.8 }}>
-        Created via @PleaseMarket — creator resolves within 48h after close.
+        Created via @PleaseMarketBot — creator resolves within 48h after close.
       </p>
     </div>
   );
