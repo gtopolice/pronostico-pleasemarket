@@ -30,11 +30,12 @@ def _enrich_seed_market(row: dict[str, Any]) -> dict[str, Any]:
 _RAW_SEED_DEMO_MARKETS: list[dict[str, Any]] = [
     {
         "documentId": "seed-ethmex-sellout-2026",
-        "question": "¿Se agotará ETH Mexico antes del domingo?",
-        "title": "¿Se agotará ETH Mexico antes del domingo?",
+        "question": "¿Ganará un proyecto de pagos con MXNB el track startup de Bitso en ETH Mexico 2026?",
+        "title": "¿Ganará un proyecto MXNB el track startup de Bitso en ETH Mexico 2026?",
         "resolution_rules": (
-            "Resuelve SÍ si el evento principal ETH Mexico 2026 agota entradas antes del domingo "
-            "23:59 hora Ciudad de México. Resuelve NO en caso contrario."
+            "Resuelve SÍ si el jurado de Bitso anuncia como ganador del track startup a un proyecto "
+            "cuyo producto use MXNB como moneda principal de settlement o pagos on-chain. "
+            "Fuente: anuncio oficial del hackathon ETH Mexico 2026 × Bitso. Resuelve NO en caso contrario."
         ),
         "close_time_utc": "2026-06-08T05:59:59+00:00",
         "state": "PREVIEW",

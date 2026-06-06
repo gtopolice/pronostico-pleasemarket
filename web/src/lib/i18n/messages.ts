@@ -296,7 +296,7 @@ const es: Messages = {
     marketsLoading: "Cargando mercados…",
     marketsEmpty: "Aún no hay mercados. Menciona a @PleaseMarketBot en X para crear el primero.",
     composeTweet:
-      "https://x.com/compose/tweet?text=@PleaseMarketBot%20%C2%BFSe%20agotar%C3%A1%20ETH%20Mexico%20antes%20del%20domingo%3F%20",
+      "https://x.com/compose/tweet?text=@PleaseMarketBot%20%C2%BFGanar%C3%A1%20un%20proyecto%20de%20pagos%20con%20MXNB%20el%20track%20startup%20de%20Bitso%20en%20ETH%20Mexico%202026%3F%20",
     cardBadgeLive: "En vivo",
     cardBadgeDemo: "Demo",
   },
