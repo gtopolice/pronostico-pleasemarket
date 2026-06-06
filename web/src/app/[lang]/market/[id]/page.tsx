@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 
+import { MarketHeroImage } from "@/components/market-hero-image";
+import { MarketPreviewPanel } from "@/components/market-preview-panel";
 import { RulesAccordion } from "@/components/rules-accordion";
+import { DEFAULT_MARKET_IMAGE } from "@/lib/fake-market-data";
 
 const apiBase = process.env.NEXT_PUBLIC_PLEASE_API_BASE ?? "http://localhost:8080";
 
@@ -14,7 +17,15 @@ type MarketRecord = {
   state?: string;
   dry_run?: boolean;
   hackathon_fallback?: boolean;
+  image_url?: string | null;
+  image?: { url?: string | null } | null;
 };
+
+function marketImageUrl(market: MarketRecord): string {
+  const fromNested = market.image?.url?.trim();
+  const fromField = market.image_url?.trim();
+  return fromField || fromNested || DEFAULT_MARKET_IMAGE;
+}
 
 async function fetchMarket(id: string): Promise<{ data: MarketRecord; source: string } | null> {
   const res = await fetch(`${apiBase}/api/markets/${id}`, { next: { revalidate: 15 } });
@@ -66,6 +77,8 @@ export default async function MarketPage({
   const anyoneBase = process.env.NEXT_PUBLIC_ANYONE_WEB_BASE ?? "https://anyone.market";
   const rules = m.resolution_rules ?? m.description ?? "No resolution rules provided.";
   const title = m.title ?? m.question ?? "Prediction market";
+  const isPreview = Boolean(m.dry_run || m.hackathon_fallback);
+  const imageUrl = marketImageUrl(m);
 
   return (
     <article>
@@ -76,11 +89,15 @@ export default async function MarketPage({
           <span className="badge badge--closed">Source: {row.source}</span>
         </div>
 
-        <h1 className="market-hero__title">{title}</h1>
-
-        {m.question && m.title !== m.question ? (
-          <p className="page-subtitle">{m.question}</p>
-        ) : null}
+        <div className="market-hero__row">
+          <MarketHeroImage src={imageUrl} alt={title} />
+          <div className="market-hero__copy">
+            <h1 className="market-hero__title">{title}</h1>
+            {m.question && m.title !== m.question ? (
+              <p className="page-subtitle">{m.question}</p>
+            ) : null}
+          </div>
+        </div>
 
         <div className="market-hero__meta">
           <span>
@@ -90,17 +107,14 @@ export default async function MarketPage({
             <strong>Creator resolves</strong> within 48h after close
           </span>
         </div>
-
-        <div className="outcome-row" aria-label="Market outcomes">
-          <div className="outcome-chip outcome-chip--yes">YES</div>
-          <div className="outcome-chip outcome-chip--no">NO</div>
-        </div>
       </div>
+
+      <MarketPreviewPanel marketId={id} isPreview={isPreview} />
 
       <RulesAccordion rules={rules} />
 
       <div className="hero__actions" style={{ marginTop: "1.5rem" }}>
-        {!m.hackathon_fallback && !m.dry_run ? (
+        {!isPreview ? (
           <a className="btn" href={`${anyoneBase}/${lang}/market/${id}`}>
             Trade on Anyone
           </a>
