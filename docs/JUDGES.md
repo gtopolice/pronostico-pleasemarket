@@ -12,34 +12,38 @@ Tracks: **Ethereum México startup** + **Bitso startup** @ [ETH Mexico 2026 × B
 
 ## Elevator pitch (30 s)
 
-> **Anyone** (anyone.market) runs prediction markets on Base. **Please.market** is the X distribution layer: tag `@PleaseMarketBot` → AI parses → preview market → creator resolves. **Demo settlement currency: MXNB** (Bitso on Arbitrum). Gasless Privy smart wallets, no seed phrase. Built in Mexico for LATAM.
+> **Anyone** (anyone.market) ya opera mercados de predicción en Base. **Please.market** es la capa en X: mencionas a `@PleaseMarketBot` con una pregunta de sí o no → la IA la convierte en mercado → tú resuelves, la gente apuesta. Demo en **MXNB** (Bitso en Arbitrum), billeteras **Privy** sin gas, sin frase semilla. Startup mexicana para los tracks **Ethereum México** y **Bitso**.
 
-**Payments story:** Demo markets in MXNB on Arbitrum via Bitso Business. On-ramp: MXN → MXNB → trade.
+**Payments story:** Demo en MXNB sobre Arbitrum vía Bitso Business. On-ramp: MXN → MXNB → operar.
+
+Video script (X-first flow): `docs/DEMO_VIDEO.md`
 
 ---
 
 ## 2-minute demo script (Español)
 
-1. Abre **https://pleasemarket-web-production.up.railway.app/es** — strip hackathon ETH Mexico × Bitso, stack Base · Privy · MXNB · OpenAI.
-2. Mercados seed en español (ETH Mexico, Bitso, Base).
-3. Abre un mercado → gráfica, panel de trade, badge **Preview hackathon · deploy onchain próximamente**.
-4. **Crear en X** — tweet de ejemplo: `@PleaseMarketBot ¿Se agotará ETH Mexico antes del domingo?`
-5. Simula webhook (o mención real si el bot está activo):
+Flujo completo en `docs/DEMO_VIDEO.md`. Resumen:
+
+1. **X** — desde tu perfil, publica: `@PleaseMarketBot ¿Ganará un proyecto de pagos con MXNB el track startup de Bitso en ETH Mexico 2026?`
+2. **Bot** — responde con enlace `/link-x` (primera vez) o enlace directo al mercado
+3. **Privy** — inicia sesión con X, vincula billetera, mercado se publica
+4. Abre **`/es/market/{id}`** — gráfica, panel de trade MXNB, badge preview hackathon
+5. **Panel** (`/es/dashboard`) — mercados, ganancias demo, claim
+6. *(Opcional)* Homepage `/es` — strip hackathon ETH Mexico × Bitso
+
+**Fallback sin bot en vivo:**
 
 ```bash
 curl -sS -X POST https://pleasemarket-worker-production.up.railway.app/api/x/webhook \
   -H 'Content-Type: application/json' \
-  -d '{"tweet_id":"demo-'$(date +%s)'","author_id":"you123","author_handle":"you","text":"@PleaseMarketBot ¿Se agotará ETH Mexico antes del domingo?"}'
+  -d '{"tweet_id":"demo-'$(date +%s)'","author_id":"you123","author_handle":"you","text":"@PleaseMarketBot ¿Ganará un proyecto de pagos con MXNB el track startup de Bitso en ETH Mexico 2026?"}'
 ```
-
-6. Bot responde en español con enlace `/es/market/{id}`.
-7. **Panel** (`/es/dashboard`) — Privy, ganancias demo, claim.
 
 ---
 
 ## 2-minute demo script (English)
 
-Same flow at `/en` with English UI and tweet: `@PleaseMarketBot Will ETH Mexico sell out before Sunday?`
+Same flow at `/en` with English UI and tweet: `@PleaseMarketBot Will a MXNB payments project win the Bitso startup track at ETH Mexico 2026?`
 
 ---
 
@@ -59,7 +63,7 @@ Same flow at `/en` with English UI and tweet: `@PleaseMarketBot Will ETH Mexico 
 ## Submission checklist
 
 - [x] Public GitHub
-- [ ] 2–3 min demo video (use script above)
+- [ ] 2–3 min demo video — script X-first en `docs/DEMO_VIDEO.md`
 - [ ] DoraHacks BUIDL + Skool tracks
 
 See `docs/HANDOFF.md` for env vars and Railway deploy.
