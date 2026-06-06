@@ -12,6 +12,7 @@ export function AppPrivyProvider({ children }: { children: React.ReactNode }) {
     <PrivyProvider
       appId={appId}
       config={{
+        loginMethods: ["twitter", "email", "wallet"],
         embeddedWallets: {
           showWalletUIs: false,
           ethereum: { createOnLogin: "all-users" },

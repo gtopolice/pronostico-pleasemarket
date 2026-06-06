@@ -2,7 +2,7 @@
 
 import { getIdentityToken, useLinkAccount, usePrivy } from "@privy-io/react-auth";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { completeLinkX, fetchLinkToken } from "@/lib/api";
 import { twitterMatchesToken, twitterOAuthAccount } from "@/lib/twitter-account";
@@ -22,6 +22,8 @@ function LinkXContent() {
   const [status, setStatus] = useState<string | null>(null);
   const [marketUrl, setMarketUrl] = useState<string | null>(null);
   const [linking, setLinking] = useState(false);
+  const [linked, setLinked] = useState(false);
+  const autoCompleteTriggered = useRef(false);
 
   const wallet = user?.wallet?.address;
   const smartWallet = user?.linkedAccounts?.find(
@@ -41,6 +43,10 @@ function LinkXContent() {
     [tokenInfo, twitterAccount],
   );
 
+  const expectedHandle = tokenInfo?.twitter_handle
+    ? `@${tokenInfo.twitter_handle.replace(/^@/, "")}`
+    : "the X account that tagged @PleaseMarketBot";
+
   useEffect(() => {
     if (!token) return;
     fetchLinkToken(token)
@@ -48,38 +54,48 @@ function LinkXContent() {
       .catch(() => setTokenError("This link is invalid or expired. Tweet @PleaseMarketBot for a new one."));
   }, [token]);
 
-  async function onLinkTwitter() {
-    setStatus(null);
-    try {
-      await linkTwitter();
-      setStatus("X account linked. Confirm it matches the handle below, then complete the link.");
-    } catch {
-      setStatus("Could not link X. Try again with the same account that tagged @PleaseMarketBot.");
-    }
-  }
-
-  async function onComplete() {
-    if (!token || !wallet || !twitterVerified) return;
+  const onComplete = useCallback(async () => {
+    if (!token || !wallet || !twitterVerified || linking || linked) return;
     setLinking(true);
     setStatus(null);
     try {
       const identityToken = await getIdentityToken();
       if (!identityToken) {
         setStatus("Session expired. Sign in again, then retry.");
+        autoCompleteTriggered.current = false;
         return;
       }
       const result = await completeLinkX(token, wallet, smartWallet?.address, identityToken);
+      setLinked(true);
       if (result.market?.market_url) {
         setMarketUrl(result.market.market_url);
         setStatus("Wallet linked! Your market is live.");
       } else {
-        setStatus("Wallet linked! Check @PleaseMarketBot on X for your market reply.");
+        setStatus("Wallet linked! You can create markets via @PleaseMarketBot on X.");
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Link failed";
       setStatus(message);
+      autoCompleteTriggered.current = false;
     } finally {
       setLinking(false);
+    }
+  }, [token, wallet, smartWallet?.address, twitterVerified, linking, linked]);
+
+  useEffect(() => {
+    if (!ready || !authenticated || !wallet || !twitterVerified || linked || linking) return;
+    if (autoCompleteTriggered.current) return;
+    autoCompleteTriggered.current = true;
+    void onComplete();
+  }, [ready, authenticated, wallet, twitterVerified, linked, linking, onComplete]);
+
+  async function onLinkTwitter() {
+    setStatus(null);
+    try {
+      await linkTwitter();
+      setStatus("X connected — linking your wallet…");
+    } catch {
+      setStatus("Could not link X. Try again with the same account that tagged @PleaseMarketBot.");
     }
   }
 
@@ -95,56 +111,91 @@ function LinkXContent() {
     return <p>Loading…</p>;
   }
 
-  const expectedHandle = tokenInfo.twitter_handle
-    ? `@${tokenInfo.twitter_handle.replace(/^@/, "")}`
-    : "the X account that tagged @PleaseMarketBot";
-
   return (
     <div>
       <h1>Link X + wallet</h1>
       <p className="card">
-        Only <strong>{expectedHandle}</strong> can complete this link. Sign in with Privy, connect
-        that X account, then link your wallet.
+        Only <strong>{expectedHandle}</strong> can complete this link. Sign in with that X account
+        and we&apos;ll create your wallet and finish automatically.
       </p>
 
-      {!authenticated ? (
-        <button className="btn" type="button" onClick={login}>
-          Sign in with Privy
-        </button>
-      ) : (
+      {linked ? (
         <>
-          <p>Wallet: {wallet ?? "—"}</p>
-          <p>
-            X:{" "}
-            {twitterAccount?.username
-              ? `@${twitterAccount.username}`
-              : "Not linked yet"}
-          </p>
-
-          {!twitterVerified && (
-            <button className="btn" type="button" onClick={onLinkTwitter}>
-              Connect X as {expectedHandle}
-            </button>
+          {status && <p style={{ marginTop: "1rem" }}>{status}</p>}
+          {marketUrl && (
+            <p style={{ marginTop: "0.75rem" }}>
+              <a className="btn" href={marketUrl}>
+                View your market
+              </a>
+            </p>
           )}
-
+          <p style={{ marginTop: "0.75rem" }}>
+            <a href="/dashboard">Creator dashboard →</a>
+          </p>
+        </>
+      ) : !authenticated ? (
+        <>
           <button
             className="btn"
             type="button"
-            onClick={onComplete}
-            disabled={!wallet || !twitterVerified || linking}
-            style={{ marginLeft: twitterVerified ? 0 : "0.5rem" }}
+            onClick={() => login({ loginMethods: ["twitter"] })}
           >
-            {linking ? "Linking…" : "Complete link"}
+            Sign in with X as {expectedHandle}
           </button>
+          <p style={{ marginTop: "0.75rem", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
+            <button
+              type="button"
+              onClick={() => login({ loginMethods: ["email", "wallet"] })}
+              style={{
+                background: "none",
+                border: "none",
+                padding: 0,
+                color: "var(--text-secondary)",
+                textDecoration: "underline",
+                cursor: "pointer",
+                font: "inherit",
+              }}
+            >
+              Use email or wallet instead
+            </button>
+          </p>
+        </>
+      ) : (
+        <>
+          {linking ? (
+            <p>Linking your wallet…</p>
+          ) : (
+            <>
+              <p>Wallet: {wallet ?? "Creating wallet…"}</p>
+              <p>
+                X:{" "}
+                {twitterAccount?.username ? `@${twitterAccount.username}` : "Not linked yet"}
+              </p>
+
+              {!wallet && <p>Setting up your embedded wallet…</p>}
+
+              {!twitterVerified && (
+                <>
+                  <button className="btn" type="button" onClick={onLinkTwitter}>
+                    Connect X as {expectedHandle}
+                  </button>
+                  <p style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "var(--text-secondary)" }}>
+                    Or sign out and use &ldquo;Sign in with X&rdquo; above.
+                  </p>
+                </>
+              )}
+
+              {twitterVerified && wallet && !linking && (
+                <button className="btn btn--outline" type="button" onClick={() => void onComplete()}>
+                  Complete link
+                </button>
+              )}
+            </>
+          )}
         </>
       )}
 
-      {status && <p style={{ marginTop: "1rem" }}>{status}</p>}
-      {marketUrl && (
-        <p style={{ marginTop: "0.75rem" }}>
-          <a href={marketUrl}>View your market →</a>
-        </p>
-      )}
+      {status && !linked && <p style={{ marginTop: "1rem" }}>{status}</p>}
     </div>
   );
 }
