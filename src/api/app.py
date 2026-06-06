@@ -15,6 +15,7 @@ from pydantic import BaseModel
 
 from src.claims.poller import run_claims_loop
 from src.config import settings
+from src.demo.seed_markets import get_seed_market, merge_market_list
 from src.db.pool import init_db
 from src.db.wallet_link import (
     complete_link_token,
@@ -112,13 +113,17 @@ async def leaderboard(period: int | None = None) -> dict:
 @app.get("/api/markets")
 async def list_markets(limit: int = 24) -> dict[str, Any]:
     """Recent preview markets created via @PleaseMarketBot (dry-run store)."""
-    rows = list_demo_markets_recent(limit)
+    rows = merge_market_list(list_demo_markets_recent(limit), limit)
     return {"data": rows}
 
 
 @app.get("/api/markets/{document_id}")
 async def get_market(document_id: str) -> dict[str, Any]:
     """Hackathon fallback market or proxy to Strapi."""
+    seed = get_seed_market(document_id)
+    if seed:
+        return {"data": seed, "source": "seed"}
+
     demo = get_demo_market(document_id)
     if demo:
         return {"data": demo, "source": "agent"}
