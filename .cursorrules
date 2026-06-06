@@ -9,9 +9,9 @@
 - Hackathon work stays in **this repo** unless explicitly asked to touch `pronostico` (bot/TMA) or `pronostico-backend` (Strapi).
 - Agent is **custom Python + FastAPI** — not OpenClaw/LangChain.
 
-## Live deploy (Railway project `chiwiwis`)
-- Web: https://chiwiwis-web-production.up.railway.app
-- Worker: https://chiwiwis-worker-production.up.railway.app
+## Live deploy (Railway project `pleasemarket`)
+- Web: https://pleasemarket-web-production.up.railway.app
+- Worker: https://pleasemarket-worker-production.up.railway.app
 - Mode: `PLEASE_DRY_RUN=1` — demo markets in Postgres, not on-chain.
 
 ## Conventions

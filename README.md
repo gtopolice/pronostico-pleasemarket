@@ -6,9 +6,9 @@ Standalone Railway service: Python agent worker + FastAPI BFF + Next.js dashboar
 
 ## Live demo
 
-- Web: https://chiwiwis-web-production.up.railway.app
-- Worker: https://chiwiwis-worker-production.up.railway.app/health
-- Example market: https://chiwiwis-web-production.up.railway.app/en/market/f9c22ea8-8124-4038-86ae-fee2c2a8f295
+- Web: https://pleasemarket-web-production.up.railway.app
+- Worker: https://pleasemarket-worker-production.up.railway.app/health
+- Example market: https://pleasemarket-web-production.up.railway.app/en/market/f9c22ea8-8124-4038-86ae-fee2c2a8f295
 
 ## Quick start
 

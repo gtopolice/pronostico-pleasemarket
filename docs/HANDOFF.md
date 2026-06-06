@@ -16,15 +16,13 @@
 
 | What | URL |
 |------|-----|
-| **Web** | https://chiwiwis-web-production.up.railway.app |
-| **Worker API** | https://chiwiwis-worker-production.up.railway.app |
-| **Health** | https://chiwiwis-worker-production.up.railway.app/health |
-| **Example market** | https://chiwiwis-web-production.up.railway.app/en/market/f9c22ea8-8124-4038-86ae-fee2c2a8f295 |
+| **Web** | https://pleasemarket-web-production.up.railway.app |
+| **Worker API** | https://pleasemarket-worker-production.up.railway.app |
+| **Health** | https://pleasemarket-worker-production.up.railway.app/health |
+| **Example market** | https://pleasemarket-web-production.up.railway.app/en/market/f9c22ea8-8124-4038-86ae-fee2c2a8f295 |
 | **Railway project** | https://railway.com/project/1c36e152-3a3e-42f8-80ea-aab08f3da718 |
 
 **Mode:** `PLEASE_DRY_RUN=1` — preview markets stored in agent Postgres (`demo_markets`), not on-chain.
-
-**Note:** Railway hostnames still say `chiwiwis-*` (legacy deploy name). UI branding is Please.market.
 
 ---
 
@@ -32,18 +30,18 @@
 
 ```bash
 # 1) Link wallet (once per X user id)
-curl -sS -X POST https://chiwiwis-worker-production.up.railway.app/api/link-x/init \
+curl -sS -X POST https://pleasemarket-worker-production.up.railway.app/api/link-x/init \
   -H 'Content-Type: application/json' \
   -d '{"twitter_id":"you123","twitter_handle":"you"}'
 # → open link_url in browser → Privy sign-in → Complete link
 
 # 2) Simulate tweet → creates preview market
-curl -sS -X POST https://chiwiwis-worker-production.up.railway.app/api/x/webhook \
+curl -sS -X POST https://pleasemarket-worker-production.up.railway.app/api/x/webhook \
   -H 'Content-Type: application/json' \
   -d '{"tweet_id":"demo-'$(date +%s)'","author_id":"you123","author_handle":"you","text":"@PleaseMarketBot Will ETH Mexico sell out before Sunday?"}'
 
 # 3) Dashboard (sign in with same Privy wallet)
-open https://chiwiwis-web-production.up.railway.app/dashboard
+open https://pleasemarket-web-production.up.railway.app/dashboard
 ```
 
 **Mention handles accepted:** `@PleaseMarketBot`, `@Chiwiwis`, `@pleasemarket`, `@pleasemarketbot` (webhook normalizes all).
@@ -119,8 +117,8 @@ pronostico-pleasemarket/
 ## Env vars (worker)
 
 ```bash
-PLEASE_WEB_URL=https://chiwiwis-web-production.up.railway.app
-ANYONE_WEB_BASE=https://chiwiwis-web-production.up.railway.app  # or anyone.market in prod
+PLEASE_WEB_URL=https://pleasemarket-web-production.up.railway.app
+ANYONE_WEB_BASE=https://pleasemarket-web-production.up.railway.app  # or anyone.market in prod
 PLEASE_DRY_RUN=1
 AGENT_DEPLOY_ENABLED=0
 PLEASE_X_HANDLE=PleaseMarketBot
@@ -141,8 +139,8 @@ AGENT_SERVICE_SECRET=...
 ## Env vars (web — build time `NEXT_PUBLIC_*`)
 
 ```bash
-NEXT_PUBLIC_PLEASE_API_BASE=https://chiwiwis-worker-production.up.railway.app
-NEXT_PUBLIC_PLEASE_WEB_URL=https://chiwiwis-web-production.up.railway.app
+NEXT_PUBLIC_PLEASE_API_BASE=https://pleasemarket-worker-production.up.railway.app
+NEXT_PUBLIC_PLEASE_WEB_URL=https://pleasemarket-web-production.up.railway.app
 NEXT_PUBLIC_PRIVY_APP_ID=...   # same app as Anyone TMA
 PRIVY_APP_SECRET=...           # server-only; verifies X on /link-x
 LINK_COMPLETE_SECRET=...       # shared with worker; same value on both services
@@ -171,8 +169,7 @@ cd web && npm install && npm run dev   # :3000
 
 1. **Dashboard empty wallet** — Privy session can be `authenticated` without wallet loaded; fixed in code (show Sign in again + demo API proxy). Redeploy web after pulls.
 2. **Link token one-time** — "token expired" = already used or >60min; generate new via `/api/link-x/init`.
-3. **`@PleaseMarketBot` vs `@Chiwiwis`** — worker accepts both; ensure `PLEASE_X_HANDLE=PleaseMarketBot` on Railway.
-4. **Railway service names** — still `chiwiwis-worker` / `chiwiwis-web` in dashboard.
+3. **`@PleaseMarketBot` vs legacy handles** — worker accepts `@Chiwiwis`, `@pleasemarket`, etc.; ensure `PLEASE_X_HANDLE=PleaseMarketBot` on Railway.
 
 ---
 
@@ -180,9 +177,9 @@ cd web && npm install && npm run dev   # :3000
 
 ```bash
 cd /home/alex/Code/pronostico-pleasemarket
-railway link   # project: chiwiwis
-railway up -s chiwiwis-worker -d
-railway up web --path-as-root -s chiwiwis-web -d
+railway link   # project: pleasemarket
+railway up -s pleasemarket-worker -d
+railway up web --path-as-root -s pleasemarket-web -d
 ```
 
 See `docs/RAILWAY.md`.
@@ -209,8 +206,8 @@ Read docs/HANDOFF.md first for live URLs, architecture, and what's done.
 Parent product: Anyone (prediction markets on Base Sepolia, Privy, Telegram TMA).
 This agent: tag @PleaseMarketBot on X → LLM parses → preview market (dry-run on Railway).
 
-Live web: https://chiwiwis-web-production.up.railway.app
-Live worker: https://chiwiwis-worker-production.up.railway.app
+Live web: https://pleasemarket-web-production.up.railway.app
+Live worker: https://pleasemarket-worker-production.up.railway.app
 
 Stack: Python FastAPI agent (custom, no LangChain), Next.js 15, OpenAI, Postgres, Railway.
 Do NOT edit pronostico (telegram/TMA) unless I ask — hackathon scope is this repo only.

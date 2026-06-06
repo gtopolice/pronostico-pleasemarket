@@ -1,5 +1,7 @@
 # Please.market Railway deploy (hackathon demo)
 
+**Production:** [web](https://pleasemarket-web-production.up.railway.app) · [worker `/health`](https://pleasemarket-worker-production.up.railway.app/health)
+
 Three services in one project:
 
 | Service | Config | Port |
