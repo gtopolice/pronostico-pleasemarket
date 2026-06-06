@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any
 
 # Demo creator avatars are served from the web app at /assets/creators/
@@ -40,6 +41,7 @@ _RAW_SEED_DEMO_MARKETS: list[dict[str, Any]] = [
         "dry_run": True,
         "demo_seed": True,
         "creator_twitter_handle": "ballknower",
+        "created_at": "2026-05-28T18:00:00+00:00",
     },
     {
         "documentId": "seed-wc-uruguay-group-2026",
@@ -54,6 +56,7 @@ _RAW_SEED_DEMO_MARKETS: list[dict[str, Any]] = [
         "dry_run": True,
         "demo_seed": True,
         "creator_twitter_handle": "ballknower",
+        "created_at": "2026-05-29T18:00:00+00:00",
     },
     {
         "documentId": "seed-wc-host-nation-final-2026",
@@ -68,6 +71,7 @@ _RAW_SEED_DEMO_MARKETS: list[dict[str, Any]] = [
         "dry_run": True,
         "demo_seed": True,
         "creator_twitter_handle": "ballknower",
+        "created_at": "2026-05-30T18:00:00+00:00",
     },
     {
         "documentId": "seed-wc-golden-boot-7-goals",
@@ -82,6 +86,7 @@ _RAW_SEED_DEMO_MARKETS: list[dict[str, Any]] = [
         "dry_run": True,
         "demo_seed": True,
         "creator_twitter_handle": "ballknower",
+        "created_at": "2026-05-31T18:00:00+00:00",
     },
     {
         "documentId": "seed-wc-usmnt-knockout-2026",
@@ -96,6 +101,7 @@ _RAW_SEED_DEMO_MARKETS: list[dict[str, Any]] = [
         "dry_run": True,
         "demo_seed": True,
         "creator_twitter_handle": "oracle",
+        "created_at": "2026-06-01T18:00:00+00:00",
     },
     {
         "documentId": "seed-wc-messi-starts-final",
@@ -110,6 +116,7 @@ _RAW_SEED_DEMO_MARKETS: list[dict[str, Any]] = [
         "dry_run": True,
         "demo_seed": True,
         "creator_twitter_handle": "satoshi",
+        "created_at": "2026-06-02T18:00:00+00:00",
     },
 ]
 
@@ -118,13 +125,30 @@ SEED_DEMO_MARKETS = [_enrich_seed_market(row) for row in _RAW_SEED_DEMO_MARKETS]
 _SEED_BY_ID = {row["documentId"]: row for row in SEED_DEMO_MARKETS}
 
 
+def seed_market_count() -> int:
+    return len(SEED_DEMO_MARKETS)
+
+
 def get_seed_market(document_id: str) -> dict[str, Any] | None:
     row = _SEED_BY_ID.get(document_id)
     return dict(row) if row else None
 
 
+def _parse_created_at(row: dict[str, Any]) -> datetime:
+    raw = row.get("created_at")
+    if isinstance(raw, datetime):
+        return raw if raw.tzinfo else raw.replace(tzinfo=timezone.utc)
+    if isinstance(raw, str) and raw.strip():
+        try:
+            parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+            return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+        except ValueError:
+            pass
+    return datetime.min.replace(tzinfo=timezone.utc)
+
+
 def merge_market_list(db_rows: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
-    """Seed markets first, then live preview markets; dedupe by documentId."""
+    """Merge seed + live preview markets, newest first."""
     capped = max(1, min(limit, 100))
     seen: set[str] = set()
     merged: list[dict[str, Any]] = []
@@ -135,7 +159,6 @@ def merge_market_list(db_rows: list[dict[str, Any]], limit: int) -> list[dict[st
             continue
         seen.add(doc_id)
         merged.append(row)
-        if len(merged) >= capped:
-            break
 
-    return merged
+    merged.sort(key=_parse_created_at, reverse=True)
+    return merged[:capped]

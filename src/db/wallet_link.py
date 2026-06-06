@@ -48,6 +48,18 @@ def get_wallet_by_address(wallet_address: str) -> WalletLink | None:
     )
 
 
+def _demo_market_payload(row: dict[str, Any]) -> dict[str, Any]:
+    payload = dict(row["payload"])
+    if not payload.get("creator_twitter_id") and row.get("twitter_id"):
+        payload["creator_twitter_id"] = row["twitter_id"]
+    if not payload.get("creator_twitter_handle") and row.get("twitter_handle"):
+        payload["creator_twitter_handle"] = row["twitter_handle"]
+    created_at = row.get("created_at")
+    if created_at is not None:
+        payload["created_at"] = created_at.isoformat()
+    return payload
+
+
 def list_demo_markets_for_wallet(
     wallet_address: str,
     smart_wallet_address: str | None = None,
@@ -59,7 +71,7 @@ def list_demo_markets_for_wallet(
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT dm.payload, wl.twitter_id, wl.twitter_handle
+                SELECT dm.payload, dm.created_at, wl.twitter_id, wl.twitter_handle
                 FROM demo_markets dm
                 LEFT JOIN wallet_links wl ON (
                   lower(wl.wallet_address) = lower(dm.payload->>'creator_wallet')
@@ -71,15 +83,7 @@ def list_demo_markets_for_wallet(
                 (list(wallets),),
             )
             rows = cur.fetchall()
-    markets: list[dict[str, Any]] = []
-    for row in rows:
-        payload = dict(row["payload"])
-        if not payload.get("creator_twitter_id") and row.get("twitter_id"):
-            payload["creator_twitter_id"] = row["twitter_id"]
-        if not payload.get("creator_twitter_handle") and row.get("twitter_handle"):
-            payload["creator_twitter_handle"] = row["twitter_handle"]
-        markets.append(payload)
-    return markets
+    return [_demo_market_payload(row) for row in rows]
 
 
 def list_demo_markets_recent(limit: int = 24) -> list[dict[str, Any]]:
@@ -88,7 +92,7 @@ def list_demo_markets_recent(limit: int = 24) -> list[dict[str, Any]]:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT dm.payload, wl.twitter_id, wl.twitter_handle
+                SELECT dm.payload, dm.created_at, wl.twitter_id, wl.twitter_handle
                 FROM demo_markets dm
                 LEFT JOIN wallet_links wl ON (
                   lower(wl.wallet_address) = lower(dm.payload->>'creator_wallet')
@@ -100,15 +104,7 @@ def list_demo_markets_recent(limit: int = 24) -> list[dict[str, Any]]:
                 (capped,),
             )
             rows = cur.fetchall()
-    markets: list[dict[str, Any]] = []
-    for row in rows:
-        payload = dict(row["payload"])
-        if not payload.get("creator_twitter_id") and row.get("twitter_id"):
-            payload["creator_twitter_id"] = row["twitter_id"]
-        if not payload.get("creator_twitter_handle") and row.get("twitter_handle"):
-            payload["creator_twitter_handle"] = row["twitter_handle"]
-        markets.append(payload)
-    return markets
+    return [_demo_market_payload(row) for row in rows]
 
 
 def get_wallet_by_twitter(twitter_id: str) -> WalletLink | None:
