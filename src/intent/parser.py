@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 from openai import OpenAI
 
 from src.config import settings
+from src.intent.locale import detect_locale
 from src.intent.models import MarketIntent, TweetContext
 
 logger = logging.getLogger(__name__)
@@ -52,6 +53,7 @@ def _fallback_intent(ctx: TweetContext) -> MarketIntent:
     if ctx.parent_text:
         prompt = f"{prompt} (context: {_strip_bot_mentions(ctx.parent_text)[:200]})"
     close = datetime.now(timezone.utc) + timedelta(days=7)
+    locale = detect_locale(ctx.text)
     return MarketIntent(
         question=prompt[:280] or "Will this event happen?",
         title=(prompt[:117] + "...") if len(prompt) > 120 else prompt[:120] or "Please.market market",
@@ -61,7 +63,7 @@ def _fallback_intent(ctx: TweetContext) -> MarketIntent:
         ),
         close_time=close,
         confidence=0.5,
-        locale="en",
+        locale=locale,
     )
 
 
@@ -79,7 +81,8 @@ async def parse_market_intent(ctx: TweetContext) -> MarketIntent:
         "Preserve @username mentions when they are part of the prediction subject "
         "(e.g. 'Will @someone reach X by date?'). Do not remove those handles from question or title. "
         "Output JSON only. Set reject=true for illegal content, spam, or unparseable prompts. "
-        "close_time must be ISO8601 UTC, at least 24h and at most 90 days from now."
+        "close_time must be ISO8601 UTC, at least 24h and at most 90 days from now. "
+        "Set locale to es when the tweet is in Spanish, otherwise en."
     )
     user_parts = [
         f"User tweet: {ctx.text}",
@@ -126,7 +129,7 @@ async def parse_market_intent(ctx: TweetContext) -> MarketIntent:
             resolution_rules=str(data["resolution_rules"]),
             close_time=close_dt,
             confidence=float(data.get("confidence", 0.8)),
-            locale=data.get("locale", "en"),
+            locale=data.get("locale") or detect_locale(ctx.text),
         )
     except Exception as exc:
         logger.exception("LLM parse failed: %s", exc)

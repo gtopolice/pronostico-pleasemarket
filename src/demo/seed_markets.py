@@ -29,6 +29,86 @@ def _enrich_seed_market(row: dict[str, Any]) -> dict[str, Any]:
 
 _RAW_SEED_DEMO_MARKETS: list[dict[str, Any]] = [
     {
+        "documentId": "seed-ethmex-sellout-2026",
+        "question": "¿Se agotará ETH Mexico antes del domingo?",
+        "title": "¿Se agotará ETH Mexico antes del domingo?",
+        "resolution_rules": (
+            "Resuelve SÍ si el evento principal ETH Mexico 2026 agota entradas antes del domingo "
+            "23:59 hora Ciudad de México. Resuelve NO en caso contrario."
+        ),
+        "close_time_utc": "2026-06-08T05:59:59+00:00",
+        "state": "PREVIEW",
+        "dry_run": True,
+        "demo_seed": True,
+        "locale": "es",
+        "creator_twitter_handle": "anyone",
+        "created_at": "2026-06-05T12:00:00+00:00",
+    },
+    {
+        "documentId": "seed-anyone-1m-volume-june",
+        "question": "¿Anyone alcanzará 1 millón MXNB en volumen antes del 30 de junio 2026?",
+        "title": "¿Anyone alcanzará 1M MXNB en volumen para fin de junio 2026?",
+        "resolution_rules": (
+            "Resuelve SÍ si el volumen acumulado en anyone.market supera 1,000,000 MXNB "
+            "antes del 30 jun 2026 23:59 GMT. Fuente: métricas públicas del protocolo."
+        ),
+        "close_time_utc": "2026-06-30T23:59:59+00:00",
+        "state": "PREVIEW",
+        "dry_run": True,
+        "demo_seed": True,
+        "locale": "es",
+        "creator_twitter_handle": "anyone",
+        "created_at": "2026-06-05T11:00:00+00:00",
+    },
+    {
+        "documentId": "seed-base-10m-daily-txs-q2",
+        "question": "¿Base superará 10M transacciones diarias en Q2 2026?",
+        "title": "¿Base superará 10M transacciones diarias en Q2 2026?",
+        "resolution_rules": (
+            "Resuelve SÍ si Base registra al menos un día con ≥10M transacciones en Q2 2026. "
+            "Fuente: BaseScan / métricas oficiales de Base."
+        ),
+        "close_time_utc": "2026-06-30T23:59:59+00:00",
+        "state": "PREVIEW",
+        "dry_run": True,
+        "demo_seed": True,
+        "locale": "es",
+        "creator_twitter_handle": "oracle",
+        "created_at": "2026-06-05T10:00:00+00:00",
+    },
+    {
+        "documentId": "seed-bitso-l2-token-july",
+        "question": "¿Bitso anunciará un token L2 antes de julio 2026?",
+        "title": "¿Bitso anunciará un token L2 antes de julio 2026?",
+        "resolution_rules": (
+            "Resuelve SÍ si Bitso publica un anuncio oficial sobre un token en una L2 de Ethereum "
+            "antes del 1 jul 2026. Resuelve NO en caso contrario."
+        ),
+        "close_time_utc": "2026-07-01T05:59:59+00:00",
+        "state": "PREVIEW",
+        "dry_run": True,
+        "demo_seed": True,
+        "locale": "es",
+        "creator_twitter_handle": "degenqueen",
+        "created_at": "2026-06-05T09:00:00+00:00",
+    },
+    {
+        "documentId": "seed-ethmex-hackathon-100-buidls",
+        "question": "¿ETH Mexico 2026 superará 100 proyectos en DoraHacks?",
+        "title": "¿ETH Mexico 2026 superará 100 BUIDLs en DoraHacks?",
+        "resolution_rules": (
+            "Resuelve SÍ si el hackathon ETH Mexico 2026 × Bitso registra más de 100 BUIDLs "
+            "antes del cierre de submissions. Fuente: página oficial del hackathon."
+        ),
+        "close_time_utc": "2026-06-05T23:59:59+00:00",
+        "state": "PREVIEW",
+        "dry_run": True,
+        "demo_seed": True,
+        "locale": "es",
+        "creator_twitter_handle": "eminence",
+        "created_at": "2026-06-05T08:00:00+00:00",
+    },
+    {
         "documentId": "seed-wc-argentina-win-2026",
         "question": "Will Argentina win the World Cup 2026?",
         "title": "Will Argentina win the World Cup 2026?",

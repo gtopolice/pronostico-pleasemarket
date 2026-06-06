@@ -8,6 +8,7 @@ import uuid
 
 from src.config import settings
 from src.db.wallet_link import create_link_token, get_wallet_by_twitter, save_demo_market
+from src.intent.locale import detect_locale
 from src.intent.models import TweetContext
 from src.intent.parser import parse_market_intent
 from src.markets.backend import BackendClient
@@ -78,6 +79,7 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
         quoted_text=tweet.get("quoted_text"),
         tweet_url=f"https://x.com/i/status/{tweet_id}",
     )
+    locale = detect_locale(ctx.text)
 
     text_lower = ctx.text.lower()
     handles = {
@@ -96,24 +98,30 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
         return
 
     if is_kill_switch_active() and not settings.please_dry_run:
-        reply_id = await x.reply(tweet_id, compose_reject_reply("Agent paused for maintenance."))
+        reply_id = await x.reply(
+            tweet_id,
+            compose_reject_reply("Agent paused for maintenance.", locale=locale),
+        )
         record_mention(tweet_id, author_id, "rejected", reply_tweet_id=reply_id)
         return
 
     ok_rate, rate_msg = check_user_rate_limit(author_id)
     if not ok_rate:
-        reply_id = await x.reply(tweet_id, compose_reject_reply(rate_msg or "Rate limited"))
+        reply_id = await x.reply(tweet_id, compose_reject_reply(rate_msg or "Rate limited", locale=locale))
         record_mention(tweet_id, author_id, "rate_limited", reply_tweet_id=reply_id)
         return
 
     ok_rep, rep_msg = can_create(author_id)
     if not ok_rep:
-        reply_id = await x.reply(tweet_id, compose_reject_reply(rep_msg or "Restricted"))
+        reply_id = await x.reply(tweet_id, compose_reject_reply(rep_msg or "Restricted", locale=locale))
         record_mention(tweet_id, author_id, "restricted", reply_tweet_id=reply_id)
         return
 
     if not is_allowlisted(author_id) and not settings.please_dry_run:
-        reply_id = await x.reply(tweet_id, compose_reject_reply("Testnet allowlist only for now."))
+        reply_id = await x.reply(
+            tweet_id,
+            compose_reject_reply("Testnet allowlist only for now.", locale=locale),
+        )
         record_mention(tweet_id, author_id, "not_allowlisted", reply_tweet_id=reply_id)
         return
 
@@ -121,7 +129,7 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
     if not wallet:
         token = create_link_token(author_id, ctx.author_handle, tweet_id)
         link_url = f"{settings.please_web_url.rstrip('/')}/link-x?token={token}"
-        reply_id = await x.reply(tweet_id, compose_link_wallet_reply(link_url))
+        reply_id = await x.reply(tweet_id, compose_link_wallet_reply(link_url, locale=locale))
         record_mention(tweet_id, author_id, "link_required", reply_tweet_id=reply_id)
         return
 
@@ -165,26 +173,33 @@ async def resume_pending_market_after_link(
         quoted_text=None,
         tweet_url=f"https://x.com/i/status/{tweet_id}",
     )
+    locale = detect_locale(ctx.text)
 
     if is_kill_switch_active() and not settings.please_dry_run:
-        reply_id = await x.reply(tweet_id, compose_reject_reply("Agent paused for maintenance."))
+        reply_id = await x.reply(
+            tweet_id,
+            compose_reject_reply("Agent paused for maintenance.", locale=locale),
+        )
         update_mention_record(tweet_id, "rejected", reply_tweet_id=reply_id)
         return None
 
     ok_rate, rate_msg = check_user_rate_limit(author_id)
     if not ok_rate:
-        reply_id = await x.reply(tweet_id, compose_reject_reply(rate_msg or "Rate limited"))
+        reply_id = await x.reply(tweet_id, compose_reject_reply(rate_msg or "Rate limited", locale=locale))
         update_mention_record(tweet_id, "rate_limited", reply_tweet_id=reply_id)
         return None
 
     ok_rep, rep_msg = can_create(author_id)
     if not ok_rep:
-        reply_id = await x.reply(tweet_id, compose_reject_reply(rep_msg or "Restricted"))
+        reply_id = await x.reply(tweet_id, compose_reject_reply(rep_msg or "Restricted", locale=locale))
         update_mention_record(tweet_id, "restricted", reply_tweet_id=reply_id)
         return None
 
     if not is_allowlisted(author_id) and not settings.please_dry_run:
-        reply_id = await x.reply(tweet_id, compose_reject_reply("Testnet allowlist only for now."))
+        reply_id = await x.reply(
+            tweet_id,
+            compose_reject_reply("Testnet allowlist only for now.", locale=locale),
+        )
         update_mention_record(tweet_id, "not_allowlisted", reply_tweet_id=reply_id)
         return None
 
@@ -214,7 +229,8 @@ async def _create_market_for_mention(
     intent = await parse_market_intent(ctx)
     ok_mod, mod_msg = moderate_intent(ctx, intent)
     if not ok_mod:
-        reply_id = await x.reply(ctx.tweet_id, compose_reject_reply(mod_msg or "Rejected"))
+        locale = intent.locale or detect_locale(ctx.text)
+        reply_id = await x.reply(ctx.tweet_id, compose_reject_reply(mod_msg or "Rejected", locale=locale))
         if is_resume:
             update_mention_record(ctx.tweet_id, "moderation_reject", reply_tweet_id=reply_id)
         else:
@@ -241,6 +257,7 @@ async def _create_market_for_mention(
                 "creator_twitter_handle": ctx.author_handle,
                 "creator_profile_image_url": ctx.author_profile_image_url,
                 "image_url": settings.please_default_image_url,
+                "locale": intent.locale,
             },
         )
         market_url = f"{settings.please_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"
