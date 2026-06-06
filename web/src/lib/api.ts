@@ -90,7 +90,7 @@ export async function fetchLeaderboard(period?: number) {
 
 export async function fetchRecentMarkets(limit = 24) {
   try {
-    const res = await fetch(`${workerBase}/api/markets?limit=${limit}`, { next: { revalidate: 30 } });
+    const res = await fetch(`${workerBase}/api/markets?limit=${limit}`, { cache: "no-store" });
     if (!res.ok) {
       return { data: [] as Array<{ documentId?: string; title?: string; question?: string; state?: string; creator_twitter_handle?: string | null; creator_profile_image_url?: string | null }> };
     }

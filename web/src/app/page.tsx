@@ -1,14 +1,9 @@
 import Image from "next/image";
 
-import { MarketListCard } from "@/components/market-list-card";
+import { HomeMarkets } from "@/components/home-markets";
 import { BRAND_LINKS, PLEASE_MARKET_LOGO_SRC } from "@/lib/brand";
-import { fetchRecentMarkets } from "@/lib/api";
 
-export const revalidate = 30;
-
-export default async function HomePage() {
-  const { data: markets } = await fetchRecentMarkets(9);
-
+export default function HomePage() {
   return (
     <div className="hero">
       <div className="hero__top">
@@ -71,28 +66,7 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <section className="home-markets">
-        <h2 className="home-markets__title">Markets from @PleaseMarketBot</h2>
-        <p className="home-markets__subtitle">Recent preview markets created on X.</p>
-        {markets.length === 0 ? (
-          <p className="card empty-state">
-            No markets yet. Tag @PleaseMarketBot on X to create the first one.
-          </p>
-        ) : (
-          <div className="market-list market-list--grid">
-            {markets.map((market) => (
-              <MarketListCard
-                key={market.documentId}
-                id={market.documentId}
-                title={market.title ?? market.question}
-                state={market.state}
-                creator_twitter_handle={market.creator_twitter_handle}
-                creator_profile_image_url={market.creator_profile_image_url}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      <HomeMarkets />
     </div>
   );
 }
