@@ -23,6 +23,7 @@ from src.db.wallet_link import (
     get_wallet_by_address,
     get_wallet_by_twitter,
     list_demo_markets_for_wallet,
+    list_demo_markets_recent,
     peek_link_token,
 )
 from src.markets.backend import BackendClient
@@ -105,6 +106,13 @@ async def leaderboard(period: int | None = None) -> dict:
     except Exception as exc:
         logger.warning("leaderboard backend failed: %s", exc)
         rows = []
+    return {"data": rows}
+
+
+@app.get("/api/markets")
+async def list_markets(limit: int = 24) -> dict[str, Any]:
+    """Recent preview markets created via @PleaseMarketBot (dry-run store)."""
+    rows = list_demo_markets_recent(limit)
     return {"data": rows}
 
 

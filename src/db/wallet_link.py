@@ -69,6 +69,22 @@ def list_demo_markets_for_wallet(
     return [row["payload"] for row in rows]
 
 
+def list_demo_markets_recent(limit: int = 24) -> list[dict[str, Any]]:
+    capped = max(1, min(limit, 100))
+    with db_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT payload FROM demo_markets
+                ORDER BY created_at DESC
+                LIMIT %s
+                """,
+                (capped,),
+            )
+            rows = cur.fetchall()
+    return [row["payload"] for row in rows]
+
+
 def get_wallet_by_twitter(twitter_id: str) -> WalletLink | None:
     with db_conn() as conn:
         with conn.cursor() as cur:
