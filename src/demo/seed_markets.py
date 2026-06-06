@@ -4,8 +4,29 @@ from __future__ import annotations
 
 from typing import Any
 
-# World Cup demo samples
-SEED_DEMO_MARKETS: list[dict[str, Any]] = [
+# Demo creator avatars are served from the web app at /assets/creators/
+_DEMO_CREATOR_AVATAR_BY_HANDLE: dict[str, str] = {
+    "anyone": "/assets/creators/anyone.png",
+    "ballknower": "/assets/creators/ballknower.jpg",
+    "degenqueen": "/assets/creators/degenqueen.jpg",
+    "eminence": "/assets/creators/eminence.png",
+    "goldbug": "/assets/creators/goldbug.jpg",
+    "oracle": "/assets/creators/oracle.jpg",
+    "popcorn": "/assets/creators/popcorn.png",
+    "satoshi": "/assets/creators/satoshi.jpg",
+    "wallstbets": "/assets/creators/wallstbets.webp",
+}
+
+
+def _enrich_seed_market(row: dict[str, Any]) -> dict[str, Any]:
+    out = dict(row)
+    handle = (out.get("creator_twitter_handle") or "").lower()
+    if not out.get("creator_profile_image_url") and handle in _DEMO_CREATOR_AVATAR_BY_HANDLE:
+        out["creator_profile_image_url"] = _DEMO_CREATOR_AVATAR_BY_HANDLE[handle]
+    return out
+
+
+_RAW_SEED_DEMO_MARKETS: list[dict[str, Any]] = [
     {
         "documentId": "seed-wc-argentina-win-2026",
         "question": "Will Argentina win the World Cup 2026?",
@@ -91,6 +112,8 @@ SEED_DEMO_MARKETS: list[dict[str, Any]] = [
         "creator_twitter_handle": "satoshi",
     },
 ]
+
+SEED_DEMO_MARKETS = [_enrich_seed_market(row) for row in _RAW_SEED_DEMO_MARKETS]
 
 _SEED_BY_ID = {row["documentId"]: row for row in SEED_DEMO_MARKETS}
 
