@@ -101,7 +101,6 @@ export default function DashboardPage() {
               key={m.documentId}
               id={m.documentId}
               title={m.title}
-              state={m.state}
               creator_twitter_handle={m.creator_twitter_handle}
               creator_profile_image_url={m.creator_profile_image_url}
             />

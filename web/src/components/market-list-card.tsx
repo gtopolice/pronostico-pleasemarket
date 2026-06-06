@@ -9,21 +9,12 @@ import { creatorAvatarUrl, creatorHandleLabel, type MarketCreator } from "@/lib/
 type MarketListCardProps = MarketCreator & {
   id?: string;
   title?: string;
-  state?: string;
   lang?: string;
 };
-
-function stateBadgeClass(state?: string) {
-  const normalized = (state ?? "").toLowerCase();
-  if (normalized.includes("live") || normalized.includes("open")) return "badge badge--live";
-  if (normalized.includes("close")) return "badge badge--closed";
-  return "badge badge--preview";
-}
 
 export function MarketListCard({
   id,
   title,
-  state,
   lang = "en",
   creator_profile_image_url,
   creator_twitter_handle,
@@ -48,7 +39,6 @@ export function MarketListCard({
         <div className="market-card__meta">
           <div className="market-card__top">
             <h3 className="market-card__title">{title ?? "Untitled market"}</h3>
-            <span className={stateBadgeClass(state)}>{state ?? "Preview"}</span>
           </div>
           {handleLabel ? <p className="market-card__creator">{handleLabel}</p> : null}
         </div>
