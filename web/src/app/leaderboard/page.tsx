@@ -13,36 +13,52 @@ export default async function LeaderboardPage({
 
   return (
     <div>
-      <h1>Leaderboard</h1>
-      <p>
-        <a href="/leaderboard?role=creator">Creators</a> ·{" "}
+      <h1 className="page-title">Leaderboard</h1>
+      <p className="page-subtitle">Top creators by volume on Please.market preview markets.</p>
+      <p className="dashboard-nav" style={{ marginTop: 0 }}>
+        <a href="/leaderboard?role=creator">Creators</a>
+        <span style={{ color: "var(--outline)" }}>·</span>
         <a href="/leaderboard?role=ambassador">Ambassadors</a>
       </p>
       {role === "ambassador" ? (
-        <p className="card">Ambassador ranks populate when position attribution indexer ships on feat/testnet.</p>
+        <p className="card empty-state">
+          Ambassador ranks populate when position attribution indexer ships on feat/testnet.
+        </p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Creator</th>
-              <th>Volume</th>
-              <th>Trades</th>
-              <th>Markets</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(data ?? []).map((row: { twitter_id: string; volume_usdc: number; trade_count: number; market_count: number }, i: number) => (
-              <tr key={row.twitter_id}>
-                <td>{i + 1}</td>
-                <td>{row.twitter_id}</td>
-                <td>${row.volume_usdc}</td>
-                <td>{row.trade_count}</td>
-                <td>{row.market_count}</td>
+        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Creator</th>
+                <th>Volume</th>
+                <th>Trades</th>
+                <th>Markets</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {(data ?? []).map(
+                (
+                  row: {
+                    twitter_id: string;
+                    volume_usdc: number;
+                    trade_count: number;
+                    market_count: number;
+                  },
+                  i: number,
+                ) => (
+                  <tr key={row.twitter_id}>
+                    <td>{i + 1}</td>
+                    <td>{row.twitter_id}</td>
+                    <td>${row.volume_usdc}</td>
+                    <td>{row.trade_count}</td>
+                    <td>{row.market_count}</td>
+                  </tr>
+                ),
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

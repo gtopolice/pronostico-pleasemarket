@@ -1,0 +1,55 @@
+/* Anyone.market design tokens (dark theme) — subset of pronostico-apps/packages/theme-css */
+
+.dark,
+html {
+  --primary: #c6c6c6;
+  --surface-tint: #c6c6c6;
+  --on-primary: #303030;
+  --primary-container: #000000;
+  --on-primary-container: #757575;
+  --secondary: #ffffff;
+  --on-secondary: #323200;
+  --secondary-container: #e9e945;
+  --on-secondary-container: #686800;
+  --tertiary: #432de7;
+  --on-tertiary: #2100a3;
+  --tertiary-container: #2958ff;
+  --on-tertiary-container: #f0ecff;
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+  --background: #141218;
+  --on-background: #e2e2e2;
+  --surface: #141218;
+  --on-surface: #e2e2e2;
+  --surface-variant: #4c4546;
+  --on-surface-variant: #cfc4c5;
+  --outline: #988e90;
+  --outline-variant: #4c4546;
+  --shadow: #000000;
+  --scrim: #000000;
+  --inverse-surface: #e2e2e2;
+  --inverse-on-surface: #303030;
+  --inverse-primary: #5e5e5e;
+  --surface-dim: #131313;
+  --surface-bright: #393939;
+  --surface-container-lowest: #0e0e0e;
+  --surface-container-low: #1b1b1b;
+  --surface-container: #1f1f1f;
+  --surface-container-high: #2a2a2a;
+  --surface-container-highest: #353535;
+  --modal-button-bg: var(--secondary-container);
+  --text-on-modal-button: var(--on-secondary-container);
+  --link-color: #c4c0ff;
+
+  --text-primary: var(--on-surface);
+  --text-secondary: var(--on-surface-variant);
+  --border-card-color: var(--outline);
+  --predictions-card-title: #f3f3f3;
+  --color-yes: #16f698;
+  --color-no: #ae71ff;
+  --color-yes-muted: rgba(22, 246, 152, 0.2);
+  --color-no-muted: rgba(174, 113, 255, 0.2);
+  --auth-button-text: #323200;
+}

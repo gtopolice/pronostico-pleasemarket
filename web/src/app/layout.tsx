@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
+import { Roboto } from "next/font/google";
+
 import { AppPrivyProvider } from "@/components/privy-provider";
+import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Please.market — prediction markets on X",
@@ -9,17 +19,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`dark ${roboto.variable}`}>
       <body>
         <AppPrivyProvider>
-          <header className="site-header">
-            <a href="/">Please.market</a>
-            <nav>
-              <a href="/leaderboard">Leaderboard</a>
-              <a href="/dashboard">Dashboard</a>
-            </nav>
-          </header>
-          <main>{children}</main>
+          <div className="site-shell">
+            <SiteHeader />
+            <main>{children}</main>
+          </div>
         </AppPrivyProvider>
       </body>
     </html>
