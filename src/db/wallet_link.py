@@ -177,13 +177,13 @@ def complete_link_token(
     smart_wallet_address: str | None = None,
     *,
     verified_twitter_id: str,
-) -> WalletLink:
+) -> tuple[WalletLink, str | None]:
     now = datetime.now(timezone.utc)
     with db_conn() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT token, twitter_id, twitter_handle FROM link_tokens
+                SELECT token, twitter_id, twitter_handle, tweet_id FROM link_tokens
                 WHERE token = %s AND used_at IS NULL AND expires_at > %s
                 """,
                 (token, now),
@@ -194,6 +194,7 @@ def complete_link_token(
             if str(row["twitter_id"]) != str(verified_twitter_id):
                 raise ValueError("link-x-identity-mismatch")
 
+            pending_tweet_id = row.get("tweet_id")
             referral_code = secrets.token_hex(4).upper()
             wallet = wallet_address.lower()
             smart = smart_wallet_address.lower() if smart_wallet_address else None
@@ -216,13 +217,14 @@ def complete_link_token(
             cur.execute("UPDATE link_tokens SET used_at = %s WHERE token = %s", (now, token))
         conn.commit()
 
-    return WalletLink(
+    link = WalletLink(
         twitter_id=saved["twitter_id"],
         wallet_address=saved["wallet_address"],
         smart_wallet_address=saved.get("smart_wallet_address"),
         twitter_handle=saved.get("twitter_handle"),
         referral_code=saved["referral_code"],
     )
+    return link, str(pending_tweet_id) if pending_tweet_id else None
 
 
 def save_demo_market(document_id: str, payload: dict[str, Any]) -> None:

@@ -30,7 +30,7 @@ from src.markets.backend import BackendClient
 from src.resolution.reminders import run_reminder_loop
 from src.x.client import XClient
 from src.x.mentions_poller import run_mentions_loop
-from src.x.webhook import handle_mention_payload
+from src.x.webhook import handle_mention_payload, resume_pending_market_after_link
 
 logger = logging.getLogger(__name__)
 
@@ -214,7 +214,7 @@ async def link_x_complete(
 ) -> dict:
     _require_link_complete_secret(x_link_complete_secret)
     try:
-        link = complete_link_token(
+        link, pending_tweet_id = complete_link_token(
             body.token,
             body.wallet_address,
             body.smart_wallet_address,
@@ -240,10 +240,28 @@ async def link_x_complete(
         except Exception as exc:
             logger.info("backend link sync skipped: %s", exc)
 
+    market: dict | None = None
+    if pending_tweet_id:
+        try:
+            market = await resume_pending_market_after_link(
+                pending_tweet_id,
+                link.twitter_id,
+                link.twitter_handle,
+                {
+                    "wallet_address": link.wallet_address,
+                    "smart_wallet_address": link.smart_wallet_address,
+                },
+                _backend,
+                _x,
+            )
+        except Exception as exc:
+            logger.exception("resume market after link failed: %s", exc)
+
     return {
         "twitter_id": link.twitter_id,
         "wallet_address": link.wallet_address,
         "referral_code": link.referral_code,
+        "market": market,
     }
 
 

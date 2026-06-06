@@ -97,6 +97,14 @@ def mention_already_processed(tweet_id: str) -> bool:
             return cur.fetchone() is not None
 
 
+def get_mention_action(tweet_id: str) -> str | None:
+    with db_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT action FROM processed_mentions WHERE tweet_id = %s", (tweet_id,))
+            row = cur.fetchone()
+    return row["action"] if row else None
+
+
 def record_mention(tweet_id: str, author_id: str, action: str, market_document_id: str | None = None, reply_tweet_id: str | None = None) -> None:
     with db_conn() as conn:
         with conn.cursor() as cur:
@@ -107,5 +115,24 @@ def record_mention(tweet_id: str, author_id: str, action: str, market_document_i
                 ON CONFLICT (tweet_id) DO NOTHING
                 """,
                 (tweet_id, author_id, action, market_document_id, reply_tweet_id),
+            )
+        conn.commit()
+
+
+def update_mention_record(
+    tweet_id: str,
+    action: str,
+    market_document_id: str | None = None,
+    reply_tweet_id: str | None = None,
+) -> None:
+    with db_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE processed_mentions
+                SET action = %s, market_document_id = %s, reply_tweet_id = %s, processed_at = NOW()
+                WHERE tweet_id = %s
+                """,
+                (action, market_document_id, reply_tweet_id, tweet_id),
             )
         conn.commit()

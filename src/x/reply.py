@@ -42,7 +42,7 @@ def compose_deploy_reply(
 
 
 def compose_link_wallet_reply(link_url: str) -> str:
-    return f"Link your wallet to create markets on Anyone ▲\n{link_url}"
+    return f"Link your wallet to create markets on please.market — powered by anyone.market ▲\n{link_url}"
 
 
 def compose_reject_reply(reason: str) -> str:

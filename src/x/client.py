@@ -90,3 +90,30 @@ class XClient:
                 logger.error("X GET failed: %s %s %s", url, response.status_code, response.text)
                 return None
             return response.json()
+
+    async def fetch_tweet(self, tweet_id: str) -> dict[str, Any] | None:
+        data = await self.get_json(
+            f"https://api.twitter.com/2/tweets/{tweet_id}",
+            params={
+                "tweet.fields": "author_id,created_at",
+                "expansions": "author_id",
+                "user.fields": "username,profile_image_url",
+            },
+        )
+        if not data or not data.get("data"):
+            return None
+
+        tweet = data["data"]
+        users = {
+            str(user["id"]): user
+            for user in (data.get("includes") or {}).get("users") or []
+        }
+        author_id = str(tweet.get("author_id", ""))
+        author = users.get(author_id) or {}
+        return {
+            "id": str(tweet["id"]),
+            "author_id": author_id,
+            "author_handle": author.get("username"),
+            "author_profile_image_url": author.get("profile_image_url"),
+            "text": tweet.get("text") or "",
+        }

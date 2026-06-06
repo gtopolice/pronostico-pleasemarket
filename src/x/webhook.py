@@ -15,11 +15,13 @@ from src.markets.deploy import deploy_market_with_fallback
 from src.moderation.rules import (
     audit,
     check_user_rate_limit,
+    get_mention_action,
     is_allowlisted,
     is_kill_switch_active,
     mention_already_processed,
     moderate_intent,
     record_mention,
+    update_mention_record,
 )
 from src.reputation.service import can_create, get_score, record_market_created
 from src.resolution.reminders import register_obligation
@@ -123,13 +125,102 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
         record_mention(tweet_id, author_id, "link_required", reply_tweet_id=reply_id)
         return
 
+    result = await _create_market_for_mention(ctx, wallet, backend, x)
+    if not result:
+        return
+
+    record_mention(tweet_id, author_id, result["action"], result["document_id"], result["reply_tweet_id"])
+
+
+async def resume_pending_market_after_link(
+    tweet_id: str,
+    author_id: str,
+    author_handle: str | None,
+    wallet: dict,
+    backend: BackendClient,
+    x: XClient,
+) -> dict | None:
+    """Create the market from a tweet that previously stopped at link_required."""
+
+    if get_mention_action(tweet_id) != "link_required":
+        logger.info("skip resume tweet=%s: not link_required", tweet_id)
+        return None
+
+    tweet = await x.fetch_tweet(tweet_id)
+    if not tweet:
+        logger.warning("resume failed: could not fetch tweet %s", tweet_id)
+        return None
+
+    if str(tweet.get("author_id")) != str(author_id):
+        logger.warning("resume failed: tweet author mismatch for %s", tweet_id)
+        return None
+
+    ctx = TweetContext(
+        tweet_id=tweet_id,
+        author_id=author_id,
+        author_handle=tweet.get("author_handle") or author_handle,
+        author_profile_image_url=tweet.get("author_profile_image_url"),
+        text=tweet.get("text", ""),
+        parent_text=None,
+        quoted_text=None,
+        tweet_url=f"https://x.com/i/status/{tweet_id}",
+    )
+
+    if is_kill_switch_active() and not settings.please_dry_run:
+        reply_id = await x.reply(tweet_id, compose_reject_reply("Agent paused for maintenance."))
+        update_mention_record(tweet_id, "rejected", reply_tweet_id=reply_id)
+        return None
+
+    ok_rate, rate_msg = check_user_rate_limit(author_id)
+    if not ok_rate:
+        reply_id = await x.reply(tweet_id, compose_reject_reply(rate_msg or "Rate limited"))
+        update_mention_record(tweet_id, "rate_limited", reply_tweet_id=reply_id)
+        return None
+
+    ok_rep, rep_msg = can_create(author_id)
+    if not ok_rep:
+        reply_id = await x.reply(tweet_id, compose_reject_reply(rep_msg or "Restricted"))
+        update_mention_record(tweet_id, "restricted", reply_tweet_id=reply_id)
+        return None
+
+    if not is_allowlisted(author_id) and not settings.please_dry_run:
+        reply_id = await x.reply(tweet_id, compose_reject_reply("Testnet allowlist only for now."))
+        update_mention_record(tweet_id, "not_allowlisted", reply_tweet_id=reply_id)
+        return None
+
+    result = await _create_market_for_mention(ctx, wallet, backend, x, is_resume=True)
+    if not result:
+        return None
+
+    update_mention_record(tweet_id, result["action"], result["document_id"], result["reply_tweet_id"])
+    return {
+        "document_id": result["document_id"],
+        "market_url": result["market_url"],
+        "question": result["question"],
+        "action": result["action"],
+    }
+
+
+async def _create_market_for_mention(
+    ctx: TweetContext,
+    wallet: dict,
+    backend: BackendClient,
+    x: XClient,
+    *,
+    is_resume: bool = False,
+) -> dict | None:
+    """Parse, moderate, deploy, and reply. Returns market result dict or None."""
+
     intent = await parse_market_intent(ctx)
     ok_mod, mod_msg = moderate_intent(ctx, intent)
     if not ok_mod:
-        reply_id = await x.reply(tweet_id, compose_reject_reply(mod_msg or "Rejected"))
-        record_mention(tweet_id, author_id, "moderation_reject", reply_tweet_id=reply_id)
-        audit("moderation_reject", author_id, tweet_id, {"reason": mod_msg})
-        return
+        reply_id = await x.reply(ctx.tweet_id, compose_reject_reply(mod_msg or "Rejected"))
+        if is_resume:
+            update_mention_record(ctx.tweet_id, "moderation_reject", reply_tweet_id=reply_id)
+        else:
+            record_mention(ctx.tweet_id, ctx.author_id, "moderation_reject", reply_tweet_id=reply_id)
+        audit("moderation_reject", ctx.author_id, ctx.tweet_id, {"reason": mod_msg})
+        return None
 
     dry = settings.please_dry_run or not settings.agent_deploy_enabled
     if dry:
@@ -146,17 +237,22 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
                 "state": "PREVIEW",
                 "dry_run": True,
                 "creator_wallet": creator,
-                "creator_twitter_id": author_id,
+                "creator_twitter_id": ctx.author_id,
                 "creator_twitter_handle": ctx.author_handle,
                 "creator_profile_image_url": ctx.author_profile_image_url,
             },
         )
-        preview_url = f"{settings.please_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"
-        reply = compose_deploy_reply(intent, preview_url, doc_id, get_score(author_id), dry_run=True)
-        reply_id = await x.reply(tweet_id, reply)
-        record_mention(tweet_id, author_id, "dry_run", doc_id, reply_id)
-        audit("dry_run", author_id, tweet_id, {"question": intent.question, "documentId": doc_id})
-        return
+        market_url = f"{settings.please_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"
+        reply = compose_deploy_reply(intent, market_url, doc_id, get_score(ctx.author_id), dry_run=True)
+        reply_id = await x.reply(ctx.tweet_id, reply)
+        audit("dry_run", ctx.author_id, ctx.tweet_id, {"question": intent.question, "documentId": doc_id})
+        return {
+            "action": "dry_run",
+            "document_id": doc_id,
+            "reply_tweet_id": reply_id,
+            "question": intent.question,
+            "market_url": market_url,
+        }
 
     result = await deploy_market_with_fallback(
         backend,
@@ -167,14 +263,20 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
     )
     doc_id = result.get("documentId", "")
     market_url = result.get("market_url") or f"{settings.please_web_url.rstrip('/')}/{intent.locale}/market/{doc_id}"
-    reply = compose_deploy_reply(intent, market_url, doc_id, get_score(author_id))
-    reply_id = await x.reply(tweet_id, reply)
+    reply = compose_deploy_reply(intent, market_url, doc_id, get_score(ctx.author_id))
+    reply_id = await x.reply(ctx.tweet_id, reply)
 
-    record_market_created(author_id, ctx.author_handle)
+    record_market_created(ctx.author_id, ctx.author_handle)
     if doc_id:
-        register_obligation(doc_id, author_id, intent.close_time, reply_id)
-    record_mention(tweet_id, author_id, "deploy", doc_id, reply_id)
-    audit("deploy", author_id, tweet_id, result)
+        register_obligation(doc_id, ctx.author_id, intent.close_time, reply_id)
+    audit("deploy", ctx.author_id, ctx.tweet_id, result)
+    return {
+        "action": "deploy",
+        "document_id": doc_id,
+        "reply_tweet_id": reply_id,
+        "question": intent.question,
+        "market_url": market_url,
+    }
 
 
 async def _handle_share_command(ctx: TweetContext, backend: BackendClient, x: XClient) -> None:
