@@ -23,6 +23,7 @@ from src.db.wallet_link import (
     get_wallet_by_address,
     get_wallet_by_twitter,
     list_demo_markets_for_wallet,
+    peek_link_token,
 )
 from src.markets.backend import BackendClient
 from src.resolution.reminders import run_reminder_loop
@@ -63,6 +64,15 @@ class LinkCompleteBody(BaseModel):
     token: str
     wallet_address: str
     smart_wallet_address: str | None = None
+    verified_twitter_id: str
+
+
+def _require_link_complete_secret(header: str | None) -> None:
+    secret = settings.link_complete_secret.strip()
+    if not secret:
+        return
+    if not header or not hmac.compare_digest(header, secret):
+        raise HTTPException(status_code=401, detail="unauthorized")
 
 
 @app.on_event("startup")
@@ -181,12 +191,31 @@ async def link_x_init(body: LinkInitBody) -> dict:
     return {"token": token, "link_url": f"{web}/link-x?token={token}"}
 
 
+@app.get("/api/link-x/token")
+async def link_x_token(token: str) -> dict:
+    row = peek_link_token(token)
+    if not row:
+        raise HTTPException(status_code=400, detail="link-token-invalid")
+    return row
+
+
 @app.post("/api/link-x/complete")
-async def link_x_complete(body: LinkCompleteBody) -> dict:
+async def link_x_complete(
+    body: LinkCompleteBody,
+    x_link_complete_secret: str | None = Header(default=None),
+) -> dict:
+    _require_link_complete_secret(x_link_complete_secret)
     try:
-        link = complete_link_token(body.token, body.wallet_address, body.smart_wallet_address)
+        link = complete_link_token(
+            body.token,
+            body.wallet_address,
+            body.smart_wallet_address,
+            verified_twitter_id=body.verified_twitter_id,
+        )
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        detail = str(exc)
+        status = 403 if detail == "link-x-identity-mismatch" else 400
+        raise HTTPException(status_code=status, detail=detail) from exc
 
     # Best-effort sync to org backend when configured
     if settings.agent_service_secret:

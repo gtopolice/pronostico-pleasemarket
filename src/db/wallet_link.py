@@ -107,7 +107,35 @@ def create_link_token(twitter_id: str, twitter_handle: str | None = None, tweet_
     return token
 
 
-def complete_link_token(token: str, wallet_address: str, smart_wallet_address: str | None = None) -> WalletLink:
+def peek_link_token(token: str) -> dict[str, Any] | None:
+    now = datetime.now(timezone.utc)
+    with db_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT twitter_id, twitter_handle, expires_at
+                FROM link_tokens
+                WHERE token = %s AND used_at IS NULL AND expires_at > %s
+                """,
+                (token, now),
+            )
+            row = cur.fetchone()
+    if not row:
+        return None
+    return {
+        "twitter_id": row["twitter_id"],
+        "twitter_handle": row.get("twitter_handle"),
+        "expires_at": row["expires_at"].isoformat(),
+    }
+
+
+def complete_link_token(
+    token: str,
+    wallet_address: str,
+    smart_wallet_address: str | None = None,
+    *,
+    verified_twitter_id: str,
+) -> WalletLink:
     now = datetime.now(timezone.utc)
     with db_conn() as conn:
         with conn.cursor() as cur:
@@ -121,6 +149,8 @@ def complete_link_token(token: str, wallet_address: str, smart_wallet_address: s
             row = cur.fetchone()
             if not row:
                 raise ValueError("link-token-invalid")
+            if str(row["twitter_id"]) != str(verified_twitter_id):
+                raise ValueError("link-x-identity-mismatch")
 
             referral_code = secrets.token_hex(4).upper()
             wallet = wallet_address.lower()

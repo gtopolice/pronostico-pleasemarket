@@ -41,22 +41,44 @@ export async function fetchMeProfile(identityToken: string, ctx: WalletContext =
   return fetchDemoProfile(ctx);
 }
 
+export async function fetchLinkToken(token: string) {
+  const res = await fetch(`/api/link-x/token?token=${encodeURIComponent(token)}`);
+  if (!res.ok) throw new Error("invalid link token");
+  return res.json() as Promise<{ twitter_id: string; twitter_handle?: string | null }>;
+}
+
 export async function completeLinkX(
   token: string,
   wallet: string,
   smartWallet?: string,
+  identityToken?: string | null,
 ) {
-  const res = await fetch(`${workerBase}/api/link-x/complete`, {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (identityToken) {
+    headers["privy-id-token"] = identityToken;
+  }
+
+  const res = await fetch("/api/link-x/complete", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({
       token,
       wallet_address: wallet,
       smart_wallet_address: smartWallet,
     }),
   });
-  if (!res.ok) throw new Error("link failed");
-  return res.json();
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const detail = typeof data.detail === "string" ? data.detail : "link failed";
+    if (detail === "link-x-identity-mismatch") {
+      throw new Error("This X account does not match the account that tagged @PleaseMarketBot.");
+    }
+    if (detail === "twitter-not-linked") {
+      throw new Error("Connect your X account before completing the link.");
+    }
+    throw new Error(detail);
+  }
+  return data;
 }
 
 export async function fetchLeaderboard(period?: number) {

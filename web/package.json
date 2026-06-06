@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@privy-io/node": "^0.20.0",
     "@privy-io/react-auth": "^3.22.1",
     "next": "^15.2.8",
     "permissionless": "^0.2.57",

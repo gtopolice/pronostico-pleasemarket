@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     api_url: str = "https://prod.api.pronostico.market/api"
     api_token: str = ""
     agent_service_secret: str = ""
+    link_complete_secret: str = ""
 
     x_api_bearer_token: str = ""
     x_api_key: str = ""

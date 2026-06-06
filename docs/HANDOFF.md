@@ -91,7 +91,7 @@ pronostico-pleasemarket/
 ### ✅ Shipped (hackathon demo path)
 
 - X webhook ingest + LLM parse + moderation + rate limits
-- Wallet link flow (`/link-x`) — token-based, **no X OAuth in Privy** (trust-on-token)
+- Wallet link flow (`/link-x`) — Privy X OAuth must match the tweet author; verified server-side via identity token
 - Dry-run markets → `demo_markets` table → `/en/market/[id]` page
 - Dashboard with demo profile/markets fallback (`/api/demo/*` proxies)
 - Privy embedded wallet + smart wallet on Base Sepolia
@@ -144,6 +144,8 @@ AGENT_SERVICE_SECRET=...
 NEXT_PUBLIC_PLEASE_API_BASE=https://chiwiwis-worker-production.up.railway.app
 NEXT_PUBLIC_PLEASE_WEB_URL=https://chiwiwis-web-production.up.railway.app
 NEXT_PUBLIC_PRIVY_APP_ID=...   # same app as Anyone TMA
+PRIVY_APP_SECRET=...           # server-only; verifies X on /link-x
+LINK_COMPLETE_SECRET=...       # shared with worker; same value on both services
 ```
 
 Legacy `CHIWIWIS_*` env names still work (aliases in `src/config.py`).
