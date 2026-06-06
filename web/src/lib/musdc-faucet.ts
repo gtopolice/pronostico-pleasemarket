@@ -32,6 +32,10 @@ export function parseClaimError(error: unknown): string {
     return "Transaction was rejected in wallet confirmation.";
   }
 
+  if (message.includes("Failed to create smart wallet client")) {
+    return "Smart wallet is not configured for Base Sepolia in Privy. Enable Smart Wallets + Base Sepolia (84532) in the Privy dashboard, then sign out and sign in again.";
+  }
+
   return message;
 }
 
