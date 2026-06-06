@@ -20,6 +20,7 @@ function LinkXContent() {
   const [tokenInfo, setTokenInfo] = useState<LinkTokenInfo | null>(null);
   const [tokenError, setTokenError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const [marketUrl, setMarketUrl] = useState<string | null>(null);
   const [linking, setLinking] = useState(false);
 
   const wallet = user?.wallet?.address;
@@ -67,8 +68,13 @@ function LinkXContent() {
         setStatus("Session expired. Sign in again, then retry.");
         return;
       }
-      await completeLinkX(token, wallet, smartWallet?.address, identityToken);
-      setStatus("Wallet linked! You can create markets via @PleaseMarketBot on X.");
+      const result = await completeLinkX(token, wallet, smartWallet?.address, identityToken);
+      if (result.market?.market_url) {
+        setMarketUrl(result.market.market_url);
+        setStatus("Wallet linked! Your market is live.");
+      } else {
+        setStatus("Wallet linked! Check @PleaseMarketBot on X for your market reply.");
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Link failed";
       setStatus(message);
@@ -134,6 +140,11 @@ function LinkXContent() {
       )}
 
       {status && <p style={{ marginTop: "1rem" }}>{status}</p>}
+      {marketUrl && (
+        <p style={{ marginTop: "0.75rem" }}>
+          <a href={marketUrl}>View your market →</a>
+        </p>
+      )}
     </div>
   );
 }
