@@ -52,6 +52,8 @@ X_ACCESS_TOKEN_SECRET=
 
 Create a second service, set **Root Directory** to `web`, deploy `web/Dockerfile`.
 
+**Important:** `web/railway.toml` sets the web healthcheck (`/`) and avoids inheriting the worker’s root `railway.toml` (`python -m src.main`, `/health`). Without it, web deploys fail after a successful build.
+
 Build args / env at deploy time:
 
 ```
