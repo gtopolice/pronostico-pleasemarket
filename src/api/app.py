@@ -15,6 +15,7 @@ from pydantic import BaseModel
 
 from src.claims.poller import run_claims_loop
 from src.config import settings
+from src.demo.seed_leaderboard import merge_leaderboard
 from src.demo.seed_markets import get_seed_market, merge_market_list, seed_market_count
 from src.db.pool import init_db
 from src.db.wallet_link import (
@@ -101,13 +102,14 @@ async def health() -> dict:
 
 
 @app.get("/api/leaderboard")
-async def leaderboard(period: int | None = None) -> dict:
+async def leaderboard(period: int | None = None, role: str = "creator") -> dict:
     try:
         rows = await _backend.fetch_leaderboard(period)
     except Exception as exc:
         logger.warning("leaderboard backend failed: %s", exc)
         rows = []
-    return {"data": rows}
+    normalized_role = "ambassador" if role == "ambassador" else "creator"
+    return {"data": merge_leaderboard(rows, role=normalized_role)}
 
 
 @app.get("/api/markets")
