@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import { MarketHeroImage } from "@/components/market-hero-image";
 import { MarketPreviewPanel } from "@/components/market-preview-panel";
 import { RulesAccordion } from "@/components/rules-accordion";
+import { BRAND_LINKS } from "@/lib/brand";
 import { creatorAvatarUrl } from "@/lib/creator-avatar";
+import { upsizeTwitterProfileImageUrl } from "@/lib/twitter-profile-image";
 
 const apiBase = process.env.NEXT_PUBLIC_PLEASE_API_BASE ?? "http://localhost:8080";
 
@@ -29,7 +31,9 @@ function marketImageUrl(market: MarketRecord): string {
   const fromNested = market.image?.url?.trim();
   const fromField = market.image_url?.trim();
   const explicit = fromField || fromNested;
-  if (explicit && !UNUSABLE_MARKET_IMAGES.has(explicit)) return explicit;
+  if (explicit && !UNUSABLE_MARKET_IMAGES.has(explicit)) {
+    return upsizeTwitterProfileImageUrl(explicit) ?? explicit;
+  }
 
   return creatorAvatarUrl({
     creator_profile_image_url: market.creator_profile_image_url,
@@ -149,7 +153,11 @@ export default async function MarketPage({
       </div>
 
       <p className="empty-state" style={{ marginTop: "1.25rem" }}>
-        Created via @PleaseMarketBot on X.
+        Created via{" "}
+        <a href={BRAND_LINKS.pleaseMarket.x} target="_blank" rel="noopener noreferrer">
+          @PleaseMarketBot
+        </a>{" "}
+        on X.
       </p>
     </article>
   );
