@@ -1,8 +1,7 @@
-/** Hardcoded demo-market → live Anyone testnet URLs (hackathon bridge). */
-const STATIC_MARKET_REDIRECTS: Record<string, string> = {
-  "46438911-198d-4907-bd90-50f281240cae":
-    "https://testnet.anyone.market/market/d4zi936ebovywtfhkk9s13yy",
-};
+import {
+  anyoneTestnetMarketUrl,
+  anyoneTestnetHomeUrl,
+} from "@/lib/anyone-testnet";
 
 function isSafeRedirectUrl(raw: string): string | null {
   const trimmed = raw.trim();
@@ -16,12 +15,16 @@ function isSafeRedirectUrl(raw: string): string | null {
   }
 }
 
-/** Resolve an external trade URL for a preview market, if configured. */
+/** Resolve external URL for a preview market (specific mapping or testnet home). */
 export function resolveMarketRedirectUrl(
   documentId: string,
   tradeUrl?: string | null,
-): string | null {
+): string {
   const fromPayload = tradeUrl ? isSafeRedirectUrl(tradeUrl) : null;
   if (fromPayload) return fromPayload;
-  return STATIC_MARKET_REDIRECTS[documentId] ?? null;
+
+  const mapped = anyoneTestnetMarketUrl(documentId);
+  if (mapped) return mapped;
+
+  return anyoneTestnetHomeUrl();
 }

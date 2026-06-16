@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { DEFAULT_LOCALE } from "@/lib/i18n";
+import { anyoneTestnetHomeUrl } from "@/lib/anyone-testnet";
 
 export default function RootPage() {
-  redirect(`/${DEFAULT_LOCALE}`);
+  redirect(anyoneTestnetHomeUrl());
 }
