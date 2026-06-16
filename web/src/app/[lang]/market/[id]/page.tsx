@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { MarketHeroImage } from "@/components/market-hero-image";
 import { MarketPreviewPanel } from "@/components/market-preview-panel";
@@ -8,6 +9,7 @@ import { creatorAvatarUrl } from "@/lib/creator-avatar";
 import { getMessages, normalizeLocale } from "@/lib/i18n";
 import { isDemoMarket, isLiveMarket } from "@/lib/market-kind";
 import { marketOptionFromRecord } from "@/lib/market-option";
+import { resolveMarketRedirectUrl } from "@/lib/market-redirect";
 import { upsizeTwitterProfileImageUrl } from "@/lib/twitter-profile-image";
 
 const apiBase = process.env.NEXT_PUBLIC_PLEASE_API_BASE ?? "http://localhost:8080";
@@ -37,6 +39,7 @@ type MarketRecord = {
   image?: { url?: string | null } | null;
   creator_profile_image_url?: string | null;
   creator_twitter_handle?: string | null;
+  trade_url?: string | null;
 };
 
 const UNUSABLE_MARKET_IMAGES = new Set(["https://anyone.market/og-image.png"]);
@@ -120,6 +123,9 @@ export default async function MarketPage({
   }
 
   const m = row.data;
+  const tradeRedirect = resolveMarketRedirectUrl(id, m.trade_url);
+  if (tradeRedirect) redirect(tradeRedirect);
+
   const close = m.close_time_utc
     ? new Date(m.close_time_utc).toLocaleString(locale === "es" ? "es-MX" : "en-US")
     : "—";

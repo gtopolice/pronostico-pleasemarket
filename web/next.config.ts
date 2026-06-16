@@ -14,6 +14,15 @@ const orgAliases = {
 const nextConfig: NextConfig = {
   output: "standalone",
   transpilePackages: Object.keys(orgAliases),
+  async redirects() {
+    return [
+      {
+        source: "/:lang(en|es)/market/46438911-198d-4907-bd90-50f281240cae",
+        destination: "https://testnet.anyone.market/market/d4zi936ebovywtfhkk9s13yy",
+        permanent: false,
+      },
+    ];
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
