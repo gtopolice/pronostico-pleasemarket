@@ -95,6 +95,7 @@ async def health() -> dict:
         "status": "ok",
         "dry_run": settings.please_dry_run,
         "deploy_enabled": settings.agent_deploy_enabled,
+        "agent_shutdown": settings.please_agent_shutdown,
         "web_base": settings.please_web_url,
         "anyone_web_base": settings.anyone_web_base,
         "x_post_enabled": _x.can_post(),

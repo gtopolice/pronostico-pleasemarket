@@ -94,6 +94,17 @@ class Settings(BaseSettings):
         default=False,
         validation_alias=AliasChoices("PLEASE_GLOBAL_KILL_SWITCH", "CHIWIWIS_GLOBAL_KILL_SWITCH"),
     )
+    please_agent_shutdown: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("PLEASE_AGENT_SHUTDOWN", "CHIWIWIS_AGENT_SHUTDOWN"),
+    )
+    please_shutdown_reply: str = Field(
+        default=(
+            "Please.market bot was built by @oneclipjeet as hackathon project and has been shut down. "
+            "The official @anyone_market bot is coming soon!"
+        ),
+        validation_alias=AliasChoices("PLEASE_SHUTDOWN_REPLY", "CHIWIWIS_SHUTDOWN_REPLY"),
+    )
 
     host: str = "0.0.0.0"
     port: int = 8080

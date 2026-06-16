@@ -27,7 +27,13 @@ from src.moderation.rules import (
 from src.reputation.service import can_create, get_score, record_market_created
 from src.resolution.reminders import register_obligation
 from src.x.client import XClient
-from src.x.reply import compose_deploy_reply, compose_link_wallet_reply, compose_reject_reply, compose_share_reply
+from src.x.reply import (
+    compose_deploy_reply,
+    compose_link_wallet_reply,
+    compose_reject_reply,
+    compose_share_reply,
+    compose_shutdown_reply,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -90,11 +96,16 @@ async def handle_mention_payload(payload: dict, backend: BackendClient, x: XClie
         "please.market",
     }
 
-    if _SHARE_RE.search(ctx.text) or _AMP_RE.search(ctx.text):
-        await _handle_share_command(ctx, backend, x)
+    if not any(h in text_lower or f"@{h}" in text_lower for h in handles):
         return
 
-    if not any(h in text_lower or f"@{h}" in text_lower for h in handles):
+    if settings.please_agent_shutdown:
+        reply_id = await x.reply(tweet_id, compose_shutdown_reply())
+        record_mention(tweet_id, author_id, "shutdown", reply_tweet_id=reply_id)
+        return
+
+    if _SHARE_RE.search(ctx.text) or _AMP_RE.search(ctx.text):
+        await _handle_share_command(ctx, backend, x)
         return
 
     if is_kill_switch_active() and not settings.please_dry_run:
@@ -174,6 +185,11 @@ async def resume_pending_market_after_link(
         tweet_url=f"https://x.com/i/status/{tweet_id}",
     )
     locale = detect_locale(ctx.text)
+
+    if settings.please_agent_shutdown:
+        reply_id = await x.reply(tweet_id, compose_shutdown_reply())
+        update_mention_record(tweet_id, "shutdown", reply_tweet_id=reply_id)
+        return None
 
     if is_kill_switch_active() and not settings.please_dry_run:
         reply_id = await x.reply(

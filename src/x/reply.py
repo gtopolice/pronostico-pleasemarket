@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.config import settings
 from src.intent.models import MarketIntent
 
 
@@ -32,6 +33,10 @@ def compose_reject_reply(reason: str, locale: str = "en") -> str:
     if locale == "es":
         return f"No puedo crear ese mercado: {reason}"
     return f"Can't create that market: {reason}"
+
+
+def compose_shutdown_reply() -> str:
+    return settings.please_shutdown_reply
 
 
 def compose_share_reply(market_title: str, share_url: str, locale: str = "en") -> str:
