@@ -1,7 +1,4 @@
-import {
-  anyoneTestnetMarketUrl,
-  anyoneTestnetHomeUrl,
-} from "@/lib/anyone-testnet";
+import { anyoneMarketUrl, anyoneHomeUrl } from "@/lib/anyone-redirect";
 
 function isSafeRedirectUrl(raw: string): string | null {
   const trimmed = raw.trim();
@@ -23,8 +20,8 @@ export function resolveMarketRedirectUrl(
   const fromPayload = tradeUrl ? isSafeRedirectUrl(tradeUrl) : null;
   if (fromPayload) return fromPayload;
 
-  const mapped = anyoneTestnetMarketUrl(documentId);
+  const mapped = anyoneMarketUrl(documentId);
   if (mapped) return mapped;
 
-  return anyoneTestnetHomeUrl();
+  return anyoneHomeUrl();
 }

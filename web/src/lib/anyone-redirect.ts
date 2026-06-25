@@ -1,20 +1,18 @@
-/** Anyone testnet URLs for please.market sunset redirects. */
+/** Anyone.market URLs for please.market sunset redirects. */
 
-export const ANYONE_TESTNET_BASE =
-  process.env.NEXT_PUBLIC_ANYONE_TESTNET_BASE?.replace(/\/$/, "") ??
-  "https://testnet.anyone.market";
+export const ANYONE_WEB_BASE =
+  process.env.NEXT_PUBLIC_ANYONE_WEB_BASE?.replace(/\/$/, "") ??
+  "https://anyone.market";
 
 export const DOGGY_BRACKET_MARKET_ID = "46438911-198d-4907-bd90-50f281240cae";
 
-const DOGGY_BRACKET_TESTNET_PATH = "/market/d4zi936ebovywtfhkk9s13yy";
-
-export function anyoneTestnetHomeUrl(): string {
-  return `${ANYONE_TESTNET_BASE}/`;
+export function anyoneHomeUrl(): string {
+  return `${ANYONE_WEB_BASE}/`;
 }
 
-export function anyoneTestnetMarketUrl(documentId: string): string | null {
+export function anyoneMarketUrl(documentId: string): string | null {
   if (documentId === DOGGY_BRACKET_MARKET_ID) {
-    return `${ANYONE_TESTNET_BASE}${DOGGY_BRACKET_TESTNET_PATH}`;
+    return `${ANYONE_WEB_BASE}/en/market/${documentId}`;
   }
   return null;
 }
@@ -25,8 +23,8 @@ export function pleaseMarketSunsetRedirects(): Array<{
   destination: string;
   permanent: boolean;
 }> {
-  const home = anyoneTestnetHomeUrl();
-  const doggyMarket = anyoneTestnetMarketUrl(DOGGY_BRACKET_MARKET_ID)!;
+  const home = anyoneHomeUrl();
+  const doggyMarket = anyoneMarketUrl(DOGGY_BRACKET_MARKET_ID)!;
 
   return [
     {

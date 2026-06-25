@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 import path from "path";
 
-import { pleaseMarketSunsetRedirects } from "./src/lib/anyone-testnet";
+import { pleaseMarketSunsetRedirects } from "./src/lib/anyone-redirect";
 
 const orgPackages = path.join(__dirname, "vendor/pronostico-apps/packages");
 

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { anyoneTestnetHomeUrl } from "@/lib/anyone-testnet";
+import { anyoneHomeUrl } from "@/lib/anyone-redirect";
 
 export default async function HomePage() {
-  redirect(anyoneTestnetHomeUrl());
+  redirect(anyoneHomeUrl());
 }
